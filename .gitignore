@@ -1,0 +1,6 @@
+.idea
+.sonarlint
+.vscode
+.DS_Store
+**/coverage/
+/node_modules/
