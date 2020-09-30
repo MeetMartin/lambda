@@ -1,0 +1,48 @@
+{
+  "name": "@7urtle/lambda",
+  "version": "1.2.1",
+  "description": "Functional programming library in JavaScript.",
+  "main": "dist/lambda.min.js",
+  "module": "src/index.js",
+  "files": [
+    "dist/*",
+    "src/*",
+    "LICENSE",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "webpack --progress --mode production",
+    "test": "jest --silent",
+    "maintain": "npm install & npm update && npm audit fix --force && npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MeetMartin/7urtle.git"
+  },
+  "keywords": [
+    "JavaScript",
+    "functional",
+    "lambda",
+    "functor",
+    "monad"
+  ],
+  "author": "Martin Novak <ragnarecek@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/MeetMartin/7urtle/issues"
+  },
+  "homepage": "https://www.7urtle.com/",
+  "devDependencies": {
+    "@babel/core": "^7.11.6",
+    "@babel/plugin-proposal-throw-expressions": "^7.10.4",
+    "@babel/plugin-transform-runtime": "^7.11.5",
+    "@babel/preset-env": "^7.11.5",
+    "@babel/runtime": "^7.11.2",
+    "babel-jest": "^26.3.0",
+    "babel-loader": "^8.1.0",
+    "jest": "^26.4.2",
+    "webpack": "^4.44.2",
+    "webpack-cli": "^3.3.12",
+    "webpack-dev-server": "^3.11.0"
+  }
+}
