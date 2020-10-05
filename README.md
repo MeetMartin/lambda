@@ -7,6 +7,8 @@ Functional programming library in JavaScript.
 ![npm bundle size (minified)](https://img.shields.io/bundlephobia/min/@7urtle/lambda.svg)
 ![npm bundle size (minified + gzip)](https://img.shields.io/bundlephobia/minzip/@7urtle/lambda.svg)
 
+![@7urtle/lambda logo](https://user-images.githubusercontent.com/11709245/95030721-1cdb4200-070e-11eb-8c97-5d89019cb654.png)
+
 ## Official Website
 [www.7urtle.com](https://www.7urtle.com/)
 
