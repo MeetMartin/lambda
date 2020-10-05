@@ -38,14 +38,14 @@ import {nary} from "./arity";
  * Either.of('abc').isFailure(); // => false
  * Either.Success('anything').isFailure(); // => false
  * Either.Failure('anything').isFailure(); // => true
- * Either.try(() => throw 'error').isFailure(); // => true
+ * Either.try(() => {throw 'error'}).isFailure(); // => true
  *
  * // you can check if the value is Success
  * myEither.isSuccess(); // => true or false
  * Either.of('abc').isSuccess(); // => true
  * Either.Success('anything').isSuccess(); // => true
  * Either.Failure('anything').isSuccess(); // => false
- * Either.try(() => throw 'error').isSuccess(); // => false
+ * Either.try(() => {throw 'error'}).isSuccess(); // => false
  *
  * // as a functor the value inside is safely mappable (map doesn't execute over Failure)
  * myEither.map(value => upperCaseOf(value));

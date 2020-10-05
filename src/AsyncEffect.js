@@ -68,7 +68,7 @@ import {isFunction} from "./conditional";
  * const AS2 = AsyncEffect.of(reject => resolve => value => resolve(2));
  * liftA2(add)(AS1)(AS2); // => resolve(3)
  *
- * const ASFail = AsyncEffect.of(() => throw 'error');
+ * const ASFail = AsyncEffect.of(() => {throw 'error'});
  * liftA3(add)(ASFail)(AS1)(AS2); // => reject('error')
  *
  * // AsyncEffect.of as well as AsyncEffect.trigger accept both curried and ternary functions

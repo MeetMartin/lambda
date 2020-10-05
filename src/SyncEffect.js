@@ -1,5 +1,4 @@
 import {deepInspect} from "./utils";
-import {isUndefined} from "./conditional";
 
 /**
  * SyncEffect is a monad that allows you to safely work with synchronous side effects in JavaScript.
@@ -15,7 +14,9 @@ import {isUndefined} from "./conditional";
  *
  * // we create SyncEffect that expects a number from 0 to 1
  * // and based on that, it returns a value or throws an error
- * const mySyncEffect = SyncEffect.of(value => value > 0.5 ? 'random success' : throw 'random failure');
+ * const throwError = () => {throw 'random failure'};
+ * const dangerousFunction = value => value > 0.5 ? 'random success' : throwError();
+ * const mySyncEffect = SyncEffect.of(dangerousFunction);
  *
  * // when you are ready, you can call trigger to trigger the side effect
  * // nothing is executed until the trigger is called
@@ -30,13 +31,13 @@ import {isUndefined} from "./conditional";
  * mySyncEffect
  * .map(value => upperCaseOf(value))
  * .trigger(Math.random());
- * // => returns 'random success' or throws 'random failure' depending on Math.random() value
+ * // => returns 'RANDOM SUCCESS' or throws 'random failure' depending on Math.random() value
  *
  * // as a monad SyncEffect can be safely flat mapped with other SyncEffects
  * // flatMap doesn't execute in case of an error and nothing executes until a trigger is called
  * SyncEffect.of(() => '7turtle').flatMap(a => SyncEffect.of(() => a + 's')).trigger();
  * // => '7urtles'
- * SyncEffect.of(() => throw 'error').flatMap(a => SyncEffect.of(() => a + 's')).trigger();
+ * SyncEffect.of(() => {throw 'error'}).flatMap(a => SyncEffect.of(() => a + 's')).trigger();
  * // => throws 'error'
  *
  * // as an applicative functor you can apply SyncEffects to each other especially using liftA2 or liftA3
@@ -53,8 +54,7 @@ import {isUndefined} from "./conditional";
  * Either.try(ClientHeightSyncEffect.trigger('#dontexist')); // Failure('Uncaught TypeError: Cannot read property 'offsetTop' of null')
  */
 export const SyncEffect = {
-  of: trigger => getSyncEffect(trigger),
-  wrap: value => getSyncEffect(() => value)
+  of: trigger => getSyncEffect(trigger)
 };
 
 const getSyncEffect = trigger => ({

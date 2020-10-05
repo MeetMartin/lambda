@@ -12,7 +12,7 @@ import {isUndefined} from "./conditional";
  * import {Case, upperCaseOf, liftA2} from '@7urtle/lambda';
  *
  * // in the example we define Case using key-value pairs. Case.of() outputs an instance of Case.
- * const myCase = Case.of([[1, 'one'], ['key', 'value'], ['_', 'fallback']);
+ * const myCase = Case.of([[1, 'one'], ['key', 'value'], ['_', 'fallback']]);
  *
  * // you reach a value by matching keys using Case.match
  * myCase.match(1); // => 'one'
@@ -35,7 +35,7 @@ import {isUndefined} from "./conditional";
  *
  * // as an applicative functor you can apply Cases to each other especially using liftA2 or liftA3
  * const add = a => b => a + b;
- * liftA2(add)(Case.of([[1, 1]))(Case.of([[1, 2]])).match(1); // => 3
+ * liftA2(add)(Case.of([[1, 1]]))(Case.of([[1, 2]])).match(1); // => 3
  * Case.of([[1, add]]).ap(Case.of([[1, 'I am']])).ap(Case.of([[1, ' a turtle']])).match(1); // => 'I am a turtle'
  * Case.of([[1, add]]).ap(Case.of([])).ap(Case.of([[1, 'I am']])).match(1); // => undefined
  */
