@@ -28,7 +28,7 @@ export const identity = anything => anything;
  *
  * compose(f,g)(x) is equivalent to f(g(x)).
  *
- * @HindleyMilner compose :: [(a -> b)] -> a -> (a -> b)
+ * @HindleyMilner compose :: [(a -> b)] -> a -> b
  *
  * @pure
  * @param {function} fns
@@ -40,7 +40,7 @@ export const identity = anything => anything;
  *
  * const addA = a => a + 'A';
  * const addB = a => a + 'B';
- * const addAB = compose(addA, addB);
+ * const addAB = value => compose(addA, addB)(value);
  *
  * addAB('Order: ');
  * // => Order: BA
@@ -55,7 +55,7 @@ export const compose = (...fns) => anything => reduceRight(anything)((v, f) => f
  *
  * pipe(f,g)(x) is equivalent to g(f(x)).
  *
- * @HindleyMilner pipe :: [(a -> b)] -> a -> (a -> b)
+ * @HindleyMilner pipe :: [(a -> b)] -> a -> b
  *
  * @pure
  * @param {function} fns
@@ -67,7 +67,7 @@ export const compose = (...fns) => anything => reduceRight(anything)((v, f) => f
  *
  * const addA = a => a + 'A';
  * const addB = a => a + 'B';
- * const addAB = pipe(addA, addB);
+ * const addAB = value => pipe(addA, addB)(value);
  *
  * addAB('Order: ');
  * // => Order: AB

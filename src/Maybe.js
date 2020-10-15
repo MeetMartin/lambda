@@ -13,6 +13,8 @@ import {nary} from "./arity";
  * know whether there is going to be an output. It makes the situation very obvious and forces its consumers
  * to safely deal with it.
  *
+ * In other languages, Maybe monad can also be called Option monad or Nullable monad.
+ *
  * @example
  * import {maybe, Maybe, upperCaseOf, liftA2} from '@7urtle/lambda';
  *

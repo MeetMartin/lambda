@@ -9,6 +9,8 @@ import {deepInspect} from "./utils";
  * mechanism for the effects of the trigger. Consider using the monads Maybe and Either for managing
  * the results of the trigger.
  *
+ * In other languages and framework, SyncEffect can be also called the IO monad.
+ *
  * @example
  * import {SyncEffect, log, upperCaseOf, liftA2, Either, isNull} from '@7urtle/lambda';
  *

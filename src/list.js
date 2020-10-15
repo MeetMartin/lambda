@@ -282,7 +282,7 @@ export const someOf = nary(checker => list => list.some(checker));
  * sort((a, b) => a < b ? -1 : a > b ? 1 : 0)(['a', 'd', 'c', 'd']); // => ['a', 'c', 'd', 'd']
  * sort((a, b) => a - b)([5, 3, 6]); // => [3, 5, 6]
  *
- * // some can be called both as a curried unary function or as a standard binary function
+ * // sort can be called both as a curried unary function or as a standard binary function
  * sort((a, b) => a - b)([5, 3, 6]) === sort((a, b) => a - b, [5, 3, 6]);
  */
 export const sort = nary(compare => list => [...list].sort(compare));

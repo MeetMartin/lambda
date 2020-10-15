@@ -11,6 +11,8 @@ import {isFunction} from "./conditional";
  *
  * AsyncEffect is evaluated lazily and nothing is executed until a trigger function is called.
  *
+ * AsyncEffect can also be calle Future monad in other libraries or languages.
+ *
  * @example
  * import {AsyncEffect, log, upperCaseOf, liftA2, liftA3} from '@7urtle/lambda';
  *
