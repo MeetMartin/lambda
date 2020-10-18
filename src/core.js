@@ -75,11 +75,12 @@ export const compose = (...fns) => anything => reduceRight(anything)((v, f) => f
 export const pipe = (...fns) => anything => reduce(anything)((v, f) => f(v))(fns);
 
 /**
- * map maps function over inputted functor outputting resulting functor.
- * map executes input mapper the input array or functor to output new array or functor.
+ * map executes mapper function over input array or monad and outputs the resulting array or monad.
  *
  * In case of monads, you should use map when you want to work with functors using functions
  * and functional composition rather than calling Functor.map.
+ *
+ * If you need to both filter and map over an array, consider using the filterMap function.
  *
  * map can be called both as a curried unary function or as a standard binary function.
  *

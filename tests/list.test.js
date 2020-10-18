@@ -26,6 +26,15 @@ test('filter executes input checker over each member of input array [a] to filte
   expect(λ.filter(a => a > 1)(list)).toEqual([2, 3]);
   expect(λ.filter(a => a > 3)(list)).toEqual([]);
   expect(λ.filter(a => a > 1)(list)).toEqual(λ.filter(a => a > 1, list));
+  expect(list).toEqual([0, 1, 2, 3]);
+});
+
+test('filterMap executes input checker over each member of input array [a] and then a mapper over the passed value.', () => {
+  const list = [0, 1, 2, 3];
+  expect(λ.filterMap(a => a > 1)(a => a + 1)(list)).toEqual([3, 4]);
+  expect(λ.filterMap(a => a > 3)(a => a + 1)(list)).toEqual([]);
+  expect(λ.filterMap(a => a > 1)(a => a + 1)(list)).toEqual(λ.filterMap(a => a > 1, a => a + 1, list));
+  expect(list).toEqual([0, 1, 2, 3]);
 });
 
 test('find executes input checker over each member of input array [a] and outputs the first array member that matches checker or undefined.', () => {

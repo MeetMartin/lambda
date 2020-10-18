@@ -63,6 +63,8 @@ export const reduceRight = nary(initial => reducer => list => list.reduceRight(r
 /**
  * filter executes input checker over each member of input array [a] to filter and output filtered new array [b].
  *
+ * If you need to both filter and map over an array, consider using the filterMap function.
+ *
  * filter can be called both as a curried unary function or as a standard binary function.
  *
  * @HindleyMilner filter :: (a -> boolean) -> [a] -> [b]
@@ -83,6 +85,39 @@ export const reduceRight = nary(initial => reducer => list => list.reduceRight(r
  * filter(a => a > 1)(list) === filter(a => a > 1, list);
  */
 export const filter = nary(checker => list => list.filter(checker));
+
+/**
+ * filterMap executes mapper function over filtered input array or monad and outputs the resulting array or monad.
+ * Only one pass through the array is executed unlike the use of map(mapper)(filter(checker)(list));
+ *
+ * filterMap can be called both as a curried unary function or as a standard ternary function.
+ *
+ * @HindleyMilner filterMap :: (a -> b)(a -> boolean) -> [a] -> [b]
+ *
+ * @pure
+ * @param {function} checker
+ * @param {function} mapper
+ * @param {array} list
+ * @return {*}
+ *
+ * @example
+ * import {filterMap} from '@7urtle/lambda';
+ *
+ * const list = [0, 1, 2, 3]
+ * const mapper = a => a + 1;
+ * const checker = a => a > 1;
+ *
+ * filterMap(checker)(mapper)(list);  // => [3, 4]
+ * filterMap(a => a > 1)(a => a + 1)([0, 1, 2, 3]); // => [3, 4]
+ *
+ * const mapOverLargerThanOne = filterMap(checker);
+ * mapOverLargerThanOne(mapper)(list); // => [3, 4]
+ *
+ * // filterMap can be called both as a curried unary function or as a standard ternary function
+ * filterMap(a => a > 1)(a => a + 1)(list) === filterMap(a => a > 1, a => a + 1, list);
+ */
+export const filterMap = nary(checker => mapper => list =>
+    reduce([])((acc, current) => checker(current) ? [...acc, mapper(current)] : acc)(list));
 
 /**
  * find executes input checker over each member of input array [a] and outputs the first array member that matches checker or undefined.
