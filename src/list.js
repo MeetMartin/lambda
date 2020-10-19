@@ -92,7 +92,7 @@ export const filter = nary(checker => list => list.filter(checker));
  *
  * filterMap can be called both as a curried unary function or as a standard ternary function.
  *
- * @HindleyMilner filterMap :: (a -> b)(a -> boolean) -> [a] -> [b]
+ * @HindleyMilner filterMap :: (a -> boolean) -> (a -> b) -> [a] -> [b]
  *
  * @pure
  * @param {function} checker
