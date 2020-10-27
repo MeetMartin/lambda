@@ -21,6 +21,8 @@ import {nary} from "./arity";
  * isEqual('something')('something else'); // => false
  * isEqual(['a'])(['a']); // => false
  * isEqual({a : 'something'})({a : 'something'}); // => false
+ * isEqual([])([]); // => false
+ * isEqual([])([]); // => false
  *
  * // isEqual can be called both as a curried unary function or as a standard binary function
  * isEqual('something')('something') === isEqual('something', 'something');
@@ -47,6 +49,8 @@ export const isEqual = nary(a => b => a === b);
  * isNotEqual('something')('something else'); // => true
  * isNotEqual(['a'])(['a']); // => true
  * isNotEqual({a : 'something'})({a : 'something'}); // => true
+ * isNotEqual([])([]); // => true
+ * isNotEqual([])([]); // => true
  *
  * // isNotEqual can be called both as a curried unary function or as a standard binary function
  * isNotEqual('something')('something else') === isNotEqual('something', 'something else');
@@ -73,6 +77,8 @@ export const isNotEqual = nary(a => b => a !== b);
  * isDeepEqual('something')('something else'); // => false
  * isDeepEqual(['a'])(['a']); // => true
  * isDeepEqual({a : 'something'})({a : 'something'}); // => true
+ * isDeepEqual([])([]); // => true
+ * isDeepEqual([])([]); // => true
  *
  * // isDeepEqual can be called both as a curried unary function or as a standard binary function
  * isDeepEqual('something')('something') === isDeepEqual('something', 'something');
@@ -99,6 +105,8 @@ export const isDeepEqual = nary(a => b => isEqual(deepInspect(a))(deepInspect(b)
  * isNotDeepEqual('something')('something else'); // => true
  * isNotDeepEqual(['a', 'b'])(['a']); // => true
  * isNotDeepEqual({a : 'something', b: c => c})({a : 'something'}); // => true
+ * isNotDeepEqual([])([]); // => false
+ * isNotDeepEqual([])([]); // => false
  *
  * // isNotDeepEqual can be called both as a curried unary function or as a standard binary function
  * isNotDeepEqual('something')('something else') === isNotDeepEqual('something', 'something else');
@@ -594,13 +602,12 @@ export const isLength = nary(a => b => isEqual(lengthOf(b))(a));
 export const isNotLength = nary(a => b => !isLength(a)(b));
 
 /**
- * isEmpty output is true if input has a length of 0. isEmpty output is always false if input is an object and not
- * an array or a string.
+ * isEmpty output is true if input is an empty string, array, or object. Otherwise it is false.
  *
  * @HindleyMilner isEmpty :: (string|array) -> boolean
  *
  * @pure
- * @param {string|array} a
+ * @param {string|array|object} anything
  * @return {boolean}
  *
  * @example
@@ -608,19 +615,20 @@ export const isNotLength = nary(a => b => !isLength(a)(b));
  *
  * isEmpty(''); // => true
  * isEmpty([]); // => true
+ * isEmpty({}); // => true
  * isEmpty('abc'); // => false
- * isEmpty({}); // => false
  */
-export const isEmpty = isLength(0);
+export const isEmpty = anything =>
+    isLength(0)(anything) ||
+    (isObject(anything) ? isLength(0)(Object.getOwnPropertyNames(anything)) : false);
 
 /**
- * isNotEmpty output is true if input does not have a length of 0. isNotEmpty output is always true if input is
- * an object and not an array or a string.
+ * isNotEmpty output is false if input is an empty string, array, or object. Otherwise it is true.
  *
  * @HindleyMilner isNotEmpty :: (string|array) -> boolean
  *
  * @pure
- * @param {string|array} a
+ * @param {string|array|object} anything
  * @return {boolean}
  *
  * @example
@@ -631,7 +639,7 @@ export const isEmpty = isLength(0);
  * isNotEmpty('abc'); // => true
  * isNotEmpty({}); => true
  */
-export const isNotEmpty = isNotLength(0);
+export const isNotEmpty = anything => !isEmpty(anything);
 
 /**
  * isZero output is true if input is 0.
@@ -668,12 +676,12 @@ export const isZero = isEqual(0);
 export const isNotZero = isNotEqual(0);
 
 /**
- * isNothing returns true if input is null, undefined or empty string or empty array.
+ * isNothing returns true if input is null, undefined or empty string or empty array or empty object.
  *
  * @HindleyMilner isNothing :: a -> boolean
  *
  * @pure
- * @param {number} a
+ * @param {*} anything
  * @return {boolean}
  *
  * @example
@@ -683,17 +691,18 @@ export const isNotZero = isNotEqual(0);
  * isNothing(undefined); // => true
  * isNothing(''); // => true
  * isNothing([]); // => true
+ * isNothing({}); // => true
  * isNothing('7urtle'); // => false
  */
-export const isNothing = a => isNull(a) || isUndefined(a) || isEmpty(a);
+export const isNothing = anything => isNull(anything) || isUndefined(anything) || isEmpty(anything);
 
 /**
- * isJust returns true if input is not null, undefined or empty string or empty array.
+ * isJust returns true if input is not null, undefined or empty string or empty array or empty object.
  *
  * @HindleyMilner isJust :: a -> boolean
  *
  * @pure
- * @param {number} a
+ * @param {*} anything
  * @return {boolean}
  *
  * @example
@@ -703,6 +712,7 @@ export const isNothing = a => isNull(a) || isUndefined(a) || isEmpty(a);
  * isJust(undefined); // => false
  * isJust(''); // => false
  * isJust([]); // => false
+ * isJus({}); // => false
  * isJust('7urtle'); // => true
  */
-export const isJust = a => !isNothing(a);
+export const isJust = anything => !isNothing(anything);

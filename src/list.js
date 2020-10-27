@@ -88,7 +88,8 @@ export const filter = nary(checker => list => list.filter(checker));
 
 /**
  * filterMap executes mapper function over filtered input array or monad and outputs the resulting array or monad.
- * Only one pass through the array is executed unlike the use of map(mapper)(filter(checker)(list));
+ *
+ * Only one pass through the array is executed unlike the use of map(mapper)(filter(checker)(list)).
  *
  * filterMap can be called both as a curried unary function or as a standard ternary function.
  *
