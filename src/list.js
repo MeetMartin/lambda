@@ -118,7 +118,7 @@ export const filter = nary(checker => list => list.filter(checker));
  * filterMap(a => a > 1)(a => a + 1)(list) === filterMap(a => a > 1, a => a + 1, list);
  */
 export const filterMap = nary(checker => mapper => list =>
-    reduce([])((acc, current) => checker(current) ? [...acc, mapper(current)] : acc)(list));
+    reduce([])((acc, current) => checker(current) ? acc.push(mapper(current)) && acc : acc)(list));
 
 /**
  * find executes input checker over each member of input array [a] and outputs the first array member that matches checker or undefined.
