@@ -19,6 +19,22 @@ test('AsyncEffect.of(a -> b -> c -> d).trigger(e -> f)(g -> h)(i) for resolving 
   })('7urtle');
 });
 
+test('AsyncEffect.ofPromise(Promise) creates AsyncEffect from a promise.', done => {
+  const successPromise = new Promise((resolve, reject) => resolve('7urtle'));
+  λ.AsyncEffect.ofPromise(successPromise).trigger(error => error)(result => {
+    expect(result).toBe('7urtle');
+    done();
+  })('7urtle');
+});
+
+test('AsyncEffect.ofPromise(Promise) rejects for a failed promise.', done => {
+  const failedPromise = new Promise((resolve, reject) => reject('error'));
+  λ.AsyncEffect.ofPromise(failedPromise).trigger(error => {
+    expect(error).toBe('error');
+    done();
+  })(success => success)('7urtle');
+});
+
 test('AsyncEffect.of((a, b, c) -> d).trigger(e -> f)(g -> h)(i) for resolving async ternary function resolves.', done => {
   λ.AsyncEffect.of(resolvingTernary).trigger(error => error)(result => {
     expect(result).toBe('7urtle');

@@ -23,6 +23,12 @@ import {isFunction} from "./conditional";
  *     setTimeout(() => value > 0.5 ? resolve('random success') : reject('random failure'), 10)
  * );
  *
+ * // we could also create AsyncEffect from a JavaScript Promise
+ * const myPromise = new Promise((resolve, reject) =>
+ *     setTimeout(() => value > 0.5 ? resolve('random success') : reject('random failure'), 10)
+ * );
+ * const promiseAsyncEffect = AsyncEffect.ofPromise(myPromise);
+ *
  * // you can inspect AsyncEffect by
  * myAsyncEffect.inspect(); // => "AsyncEffect(function...
  *
@@ -93,7 +99,10 @@ export const AsyncEffect = {
     } catch(error) {
       reject(error);
     }
-  }))
+  })),
+  ofPromise: promise => AsyncEffect.of(reject => resolve => _ =>
+      promise.then(resolve).catch(reject)
+  )
 };
 
 const getAsyncEffect = trigger => ({
