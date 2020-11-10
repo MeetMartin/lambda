@@ -1,6 +1,6 @@
 {
   "name": "@7urtle/lambda",
-  "version": "1.2.5",
+  "version": "1.2.6",
   "description": "Functional programming library in JavaScript.",
   "main": "dist/lambda.min.js",
   "module": "src/index.js",
