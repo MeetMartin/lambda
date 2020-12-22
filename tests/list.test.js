@@ -118,3 +118,23 @@ test('sortNumerically outputs an array sorted numerically from 1 to 2.', () => {
 test('sortNumerically21 outputs an array sorted numerically from 2 to 1.', () => {
   expect(λ.sortNumerically21([3, 4, 1, 3])).toEqual([4, 3, 3, 1]);
 });
+
+test('headOf outputs the first item (head) from the input array.', () => {
+  expect(λ.headOf([3, 4, 1, 8])).toEqual(3);
+  expect(λ.headOf([8])).toEqual(8);
+});
+
+test('tailOf outputs the the input array without its first item.', () => {
+  expect(λ.tailOf([3, 4, 1, 8])).toEqual([4, 1, 8]);
+  expect(λ.tailOf([8])).toEqual([]);
+});
+
+test('initOf outputs the the input array without its last item.', () => {
+  expect(λ.initOf([3, 4, 1, 8])).toEqual([3, 4, 1]);
+  expect(λ.initOf([8])).toEqual([]);
+});
+
+test('lastOf outputs the last item from the input array.', () => {
+  expect(λ.lastOf([3, 4, 1, 8])).toEqual(8);
+  expect(λ.lastOf([3])).toEqual(3);
+});

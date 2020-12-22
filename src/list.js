@@ -1,4 +1,4 @@
-import {minusOneToUndefined} from './utils';
+import {lengthOf, minusOneToUndefined} from './utils';
 import {nary} from "./arity";
 import {upperCaseOf} from "./string";
 
@@ -254,14 +254,17 @@ export const entriesOf = Object.entries;
 export const everyOf = nary(checker => list => list.every(checker));
 
 /**
- * slice outputs selected array elements as an array based on input range.
+ * slice outputs selected array elements as an array based on input range. First argument end
+ * represents the ending index (not length) and start represents the starting index in the input
+ * array list.
  *
  * slice can be called both as a curried unary function or as a standard ternary function.
  *
  * @HindleyMilner slice :: number -> number -> [a] -> [a]
  *
  * @pure
- * @param {function} checker
+ * @param {number} end
+ * @param {number} start
  * @param {array} list
  * @return {array}
  *
@@ -386,3 +389,71 @@ export const sortNumerically = sort((a, b) => a - b);
  * sortNumerically21([3, 4, 1, 3]); // => [4, 3, 3, 1]
  */
 export const sortNumerically21 = sort((a, b) => b - a);
+
+/**
+ * headOf outputs the first item (head) from the input array.
+ *
+ * @HindleyMilner headOf :: [a] -> a
+ *
+ * @pure
+ * @param {array} list
+ * @return {any}
+ *
+ * @example
+ * import {headOf} from '@7urtle/lambda';
+ *
+ * headOf([3, 4, 1, 8]); // => 3
+ * headOf([8]); // => 8
+ */
+export const headOf = list => list[0];
+
+/**
+ * tailOf outputs the the input array without its first item.
+ *
+ * @HindleyMilner tailOf :: [a] -> []
+ *
+ * @pure
+ * @param {array} list
+ * @return {array}
+ *
+ * @example
+ * import {tailOf} from '@7urtle/lambda';
+ *
+ * tailOf([3, 4, 1, 8]); // => [4, 1, 8]
+ * tailOf([8]); // => []
+ */
+export const tailOf = list => list.slice(1);
+
+/**
+ * initOf outputs the the input array without its last item.
+ *
+ * @HindleyMilner initOf :: [a] -> []
+ *
+ * @pure
+ * @param {array} list
+ * @return {array}
+ *
+ * @example
+ * import {initOf} from '@7urtle/lambda';
+ *
+ * initOf([3, 4, 1, 8]); // => [3, 4, 1]
+ * initOf([8]); // => []
+ */
+export const initOf = list => slice(lengthOf(list) -1)(0)(list);
+
+/**
+ * lastOf outputs the last item from the input array.
+ *
+ * @HindleyMilner lastOf :: [a] -> a
+ *
+ * @pure
+ * @param {array} list
+ * @return {any}
+ *
+ * @example
+ * import {lastOf} from '@7urtle/lambda';
+ *
+ * lastOf([3, 4, 1, 8]); // => 8
+ * lastOf([3]); // => 3
+ */
+export const lastOf = list => list[lengthOf(list) -1];

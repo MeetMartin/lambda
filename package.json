@@ -1,6 +1,6 @@
 {
   "name": "@7urtle/lambda",
-  "version": "1.2.8",
+  "version": "1.2.10",
   "description": "Functional programming library in JavaScript.",
   "main": "dist/lambda.min.js",
   "module": "src/index.js",
@@ -33,15 +33,15 @@
   },
   "homepage": "https://www.7urtle.com/",
   "devDependencies": {
-    "@babel/core": "^7.12.3",
+    "@babel/core": "^7.12.10",
     "@babel/plugin-proposal-throw-expressions": "^7.12.1",
-    "@babel/plugin-transform-runtime": "^7.12.1",
-    "@babel/preset-env": "^7.12.1",
+    "@babel/plugin-transform-runtime": "^7.12.10",
+    "@babel/preset-env": "^7.12.11",
     "@babel/runtime": "^7.12.5",
     "babel-jest": "^26.6.3",
-    "babel-loader": "^8.1.0",
+    "babel-loader": "^8.2.2",
     "jest": "^26.6.3",
-    "webpack": "^5.4.0",
+    "webpack": "^5.11.0",
     "webpack-cli": "^3.3.12",
     "webpack-dev-server": "^3.11.0"
   }
