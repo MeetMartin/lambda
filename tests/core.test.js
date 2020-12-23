@@ -119,6 +119,18 @@ test('contact outputs concatenated inputs of strings, arrays and objects or outp
   expect(λ.concat('cd')('ab')).toBe(λ.concat('cd', 'ab'));
 });
 
+test('merge performs a deep merge on all input objects and arrays.', () => {
+  const obj1 = { a: 'a', c: ['a'] };
+  const obj2 = { b: a => a, d: ['a', 'b'] };
+  const obj3 = { a: 'c', c: ['c'] };
+  expect(JSON.stringify(λ.merge(obj1, obj2, obj3)))
+      .toBe(JSON.stringify({"a": "c", "b": a => a, "c": ["a", "c"], "d": ["a", "b"]}));
+
+  const list1 = ['a', 'b'];
+  const list2 = [1, 2];
+  expect(λ.merge(list1,list2)).toEqual(['a', 'b', 1, 2]);
+});
+
 test('includes output is true if b includes a.', () => {
   expect(λ.includes('rt')('7urtle')).toBe(true);
   expect(λ.includes('7urtle')('7urtle')).toBe(true);

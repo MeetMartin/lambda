@@ -1,6 +1,7 @@
 import {lengthOf, minusOneToUndefined} from './utils';
 import {nary} from "./arity";
 import {upperCaseOf} from "./string";
+import {concat, merge} from "./core";
 
 /**
  * reduce executes input reducer function that over each member of input array [b] to output a single value. It is
@@ -457,3 +458,35 @@ export const initOf = list => slice(lengthOf(list) -1)(0)(list);
  * lastOf([3]); // => 3
  */
 export const lastOf = list => list[lengthOf(list) -1];
+
+/**
+ * groupBy outputs an objects with groups produced by an input function over input list.
+ *
+ * groupBy can be called both as a curried unary function or as a standard binary function.
+ *
+ * @HindleyMilner groupBy :: (a -> b) -> [a] -> {b: a}
+ *
+ * @pure
+ * @param {function} fn
+ * @param {array} list
+ * @return {object}
+ *
+ * @example
+ * import {groupBy} from '@7urtle/lambda';
+ *
+ * groupBy(a => a.length)(['one', 'two', 'three']);
+ * // => {"3": ["one", "two"], "5": ["three"]}
+ *
+ * groupBy(a => a % 2)([1, 2, 3]);
+ * // =>  {"0": [2], "1": [1, 3]}
+ *
+ * // groupBy can be called both as a curried unary function or as a standard binary function
+ * groupBy(a => a.length)(['one', 'two', 'three']) === groupBy(a => a.length, ['one', 'two', 'three'])
+ */
+export const groupBy = nary(fn => list =>
+    reduce
+    ({})
+    ((acc, current) =>
+        (acc[fn(current)] = acc[fn(current)] || []).push(current) && acc
+    )
+    (list));

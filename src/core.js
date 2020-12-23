@@ -1,5 +1,5 @@
-import {reduce, reduceRight} from './list';
-import {isString, isArray, isObject} from './conditional';
+import {reduce, reduceRight, filterMap} from './list';
+import {isString, isArray, isObject, isNotArray} from './conditional';
 import {minusOneToUndefined, passThrough} from './utils';
 import {nary} from "./arity";
 
@@ -205,7 +205,7 @@ export const liftA2 = nary(fn => ap1 => ap2 => ap1.map(fn).ap(ap2));
 export const liftA3 = nary(fn => ap1 => ap2 => ap3 => ap1.map(fn).ap(ap2).ap(ap3));
 
 /**
- * contact outputs concatenated inputs of strings, arrays and objects or outputs undefined for other types.
+ * contact outputs concatenated inputs of strings, arrays and shallow objects or outputs undefined for other types.
  *
  * concat can be called both as a curried unary function or as a standard binary function.
  *
@@ -233,6 +233,50 @@ export const concat = nary(a => b =>
     : isObject(b)
       ? {...b, ...a}
       : undefined);
+
+/**
+ * merge performs a deep merge on all input objects and arrays.
+ *
+ * @HindleyMilner merge :: [a] -> [b]
+ *
+ * @pure
+ * @param {array|object} sources
+ * @return {array|object}
+ *
+ * @example
+ * import {merge} from '@7urtle/lambda';
+ *
+ * const obj1 = { a: 'a', c: ['a'] };
+ * const obj2 = { b: a => a, d: ['a', 'b'] };
+ * const obj3 = { a: 'c', c: ['c'] };
+ *
+ * merge(obj1, obj2, obj3));
+ * // => {"a": "c", "b": a => a, "c": ["a", "c"], "d": ["a", "b"]}
+ *
+ * const list1 = ['a', 'b'];
+ * const list2 = [1, 2];
+ *
+ * merge(list1,list2);
+ * // => ['a', 'b', 1, 2]
+ */
+export const merge = (...sources) =>
+    reduce
+    ([])
+    ((acc, current) =>
+        isArray(current)
+            ? [...acc, ...current]
+            : isObject(current)
+            ? reduce
+            (acc)
+            ((a, c) =>
+                isObject(current[c]) && c in acc
+                    ? {...a, [c]: merge(acc[c], current[c])}
+                    : {...a, [c]: current[c]}
+            )
+            (Object.getOwnPropertyNames(current))
+            : {...acc, ...current}
+    )
+    (sources);
 
 /**
  * includes(a)(b) output is true if b includes a.

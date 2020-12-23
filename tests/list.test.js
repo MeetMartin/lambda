@@ -138,3 +138,9 @@ test('lastOf outputs the last item from the input array.', () => {
   expect(λ.lastOf([3, 4, 1, 8])).toEqual(8);
   expect(λ.lastOf([3])).toEqual(3);
 });
+
+test('groupBy', () => {
+  expect(λ.groupBy(a => a.length)(['one', 'two', 'three'])).toEqual({"3": ["one", "two"], "5": ["three"]});
+  expect(λ.groupBy(a => a % 2)([1, 2, 3])).toEqual( {"0": [2], "1": [1, 3]});
+  expect(λ.groupBy(a => a % 2)([1, 2, 3])).toEqual( λ.groupBy(a => a % 2, [1, 2, 3]));
+});
