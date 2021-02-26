@@ -113,8 +113,8 @@ test('liftA3 provides point-free way of writing calls over applicative functors 
 test('contact outputs concatenated inputs of strings, arrays and objects or outputs undefined for other types.', () => {
   expect(λ.concat('cd')('ab')).toBe('abcd');
   expect(λ.concat([3, 4])([1, 2])).toEqual([1, 2, 3, 4]);
-  expect(λ.concat({here: 'there'})({hi: 'hello'})).toEqual({hi: 'hello', here: 'there'});
-  expect(λ.concat({here: {here: 'there'}})({hi: 'hello'})).toEqual({hi: 'hello', here: {here: 'there'}});
+  expect(λ.concat({ here: 'there' })({ hi: 'hello' })).toEqual({ hi: 'hello', here: 'there' });
+  expect(λ.concat({ here: { here: 'there' } })({ hi: 'hello' })).toEqual({ hi: 'hello', here: { here: 'there' } });
   expect(λ.concat('cd')(1)).toBe(undefined);
   expect(λ.concat('cd')('ab')).toBe(λ.concat('cd', 'ab'));
 });
@@ -124,11 +124,11 @@ test('merge performs a deep merge on all input objects and arrays.', () => {
   const obj2 = { b: a => a, d: ['a', 'b'] };
   const obj3 = { a: 'c', c: ['c'] };
   expect(JSON.stringify(λ.merge(obj1, obj2, obj3)))
-      .toBe(JSON.stringify({"a": "c", "b": a => a, "c": ["a", "c"], "d": ["a", "b"]}));
+    .toBe(JSON.stringify({ "a": "c", "b": a => a, "c": ["a", "c"], "d": ["a", "b"] }));
 
   const list1 = ['a', 'b'];
   const list2 = [1, 2];
-  expect(λ.merge(list1,list2)).toEqual(['a', 'b', 1, 2]);
+  expect(λ.merge(list1, list2)).toEqual(['a', 'b', 1, 2]);
 });
 
 test('includes output is true if b includes a.', () => {

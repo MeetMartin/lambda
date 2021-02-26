@@ -1,7 +1,7 @@
-import {reduce, reduceRight, filterMap} from './list';
-import {isString, isArray, isObject, isNotArray} from './conditional';
-import {minusOneToUndefined, passThrough} from './utils';
-import {nary} from "./arity";
+import { reduce, reduceRight, filterMap } from './list';
+import { isString, isArray, isObject, isNotArray } from './conditional';
+import { minusOneToUndefined, passThrough } from './utils';
+import { nary } from "./arity";
 
 /**
  * identity is a function that simply passes its input to its output without changing it.
@@ -228,11 +228,11 @@ export const liftA3 = nary(fn => ap1 => ap2 => ap3 => ap1.map(fn).ap(ap2).ap(ap3
  * concat('cd')('ab') === concat('cd', 'ab');
  */
 export const concat = nary(a => b =>
-  isString(b) || isArray(b)
-    ? b.concat(a)
-    : isObject(b)
-      ? {...b, ...a}
-      : undefined);
+    isString(b) || isArray(b)
+        ? b.concat(a)
+        : isObject(b)
+            ? { ...b, ...a }
+            : undefined);
 
 /**
  * merge performs a deep merge on all input objects and arrays.
@@ -261,22 +261,22 @@ export const concat = nary(a => b =>
  */
 export const merge = (...sources) =>
     reduce
-    ([])
-    ((acc, current) =>
-        isArray(current)
-            ? [...acc, ...current]
-            : isObject(current)
-            ? reduce
-            (acc)
-            ((a, c) =>
-                isObject(current[c]) && c in acc
-                    ? {...a, [c]: merge(acc[c], current[c])}
-                    : {...a, [c]: current[c]}
-            )
-            (Object.getOwnPropertyNames(current))
-            : {...acc, ...current}
-    )
-    (sources);
+        ([])
+        ((acc, current) =>
+            isArray(current)
+                ? [...acc, ...current]
+                : isObject(current)
+                    ? reduce
+                        (acc)
+                        ((a, c) =>
+                            isObject(current[c]) && c in acc
+                                ? { ...a, [c]: merge(acc[c], current[c]) }
+                                : { ...a, [c]: current[c] }
+                        )
+                        (Object.getOwnPropertyNames(current))
+                    : { ...acc, ...current }
+        )
+        (sources);
 
 /**
  * includes(a)(b) output is true if b includes a.
