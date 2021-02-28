@@ -405,6 +405,7 @@ export const sortNumerically21 = sort((a, b) => b - a);
  *
  * headOf([3, 4, 1, 8]); // => 3
  * headOf([8]); // => 8
+ * headOf([]); // => undefined
  */
 export const headOf = list => list[0];
 
@@ -422,6 +423,7 @@ export const headOf = list => list[0];
  *
  * tailOf([3, 4, 1, 8]); // => [4, 1, 8]
  * tailOf([8]); // => []
+ * tailOf([]); // => []
  */
 export const tailOf = list => list.slice(1);
 
@@ -439,6 +441,7 @@ export const tailOf = list => list.slice(1);
  *
  * initOf([3, 4, 1, 8]); // => [3, 4, 1]
  * initOf([8]); // => []
+ * initOf([]); // => []
  */
 export const initOf = list => slice(lengthOf(list) -1)(0)(list);
 
@@ -456,6 +459,7 @@ export const initOf = list => slice(lengthOf(list) -1)(0)(list);
  *
  * lastOf([3, 4, 1, 8]); // => 8
  * lastOf([3]); // => 3
+ * lastOf([]); // => undefined
  */
 export const lastOf = list => list[lengthOf(list) -1];
 
