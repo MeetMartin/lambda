@@ -1,7 +1,7 @@
-import {reduce, reduceRight, filterMap} from './list';
-import {isString, isArray, isObject, isNotArray} from './conditional';
-import {minusOneToUndefined, passThrough} from './utils';
-import {nary} from "./arity";
+import { reduce, reduceRight, filterMap } from './list';
+import { isString, isArray, isObject, isNotArray } from './conditional';
+import { minusOneToUndefined, passThrough } from './utils';
+import { nary } from "./arity";
 
 /**
  * identity is a function that simply passes its input to its output without changing it.
@@ -19,6 +19,58 @@ import {nary} from "./arity";
  * // => anything
  */
 export const identity = anything => anything;
+
+/**
+ * and is a boolean-type function composition
+ * where each boolean function is '&&'d together.
+ * 
+ * The boolean functions may be entered in any order.
+ * 
+ * and can be used together with or to encapsulate a predicate in a single function.
+ * 
+ * @HindleyMilner and :: [(a -> boolean)] -> a -> boolean
+ * 
+ * @pure
+ * @param {function} boolFns
+ * @param {*} anything
+ * @return {*}
+ * 
+ * @example
+ * import {and, isGreaterThan, isLesssThan} from '@7urtle/lambda';
+ * 
+ * const isEven = number => number % 2 === 0;
+ * 
+ * const isSingleEvenDigit = and(isEven, isGreaterThan(-10), isLessThan(10));
+ * isSingleEvenDigit(8)
+ * // => true
+ */
+export const and = (...boolFns) => anything => boolFns.every(boolFn => boolFn(anything));
+
+/**
+ * or is a boolean-type function composition
+ * where each boolean function is '||'d together.
+ * 
+ * The boolean functions may be entered in any order.
+ * 
+ * or can be used together with and to encapsulate a predicate in a single function.
+ * 
+ * @HindleyMilner and :: [(a -> boolean)] -> a -> boolean
+ * 
+ * @pure
+ * @param {function} boolFns
+ * @param {*} anything
+ * @return {*}
+ * 
+ * @example
+ * import {or} from '@7urtle/lambda';
+ * 
+ * const isDivisibleBy = divisor => number => number % divisor === 0;
+ * const isFizzBuzzNumber = or(isDivisibleBy(3), isDivisibleBy(5));
+ * 
+ * isFizzBuzzNumber(15)
+ * // => true
+ */
+export const or = (...boolFns) => anything => boolFns.some(boolFn => boolFn(anything));
 
 /**
  * compose is a right-to-left function composition
@@ -228,11 +280,11 @@ export const liftA3 = nary(fn => ap1 => ap2 => ap3 => ap1.map(fn).ap(ap2).ap(ap3
  * concat('cd')('ab') === concat('cd', 'ab');
  */
 export const concat = nary(a => b =>
-  isString(b) || isArray(b)
-    ? b.concat(a)
-    : isObject(b)
-      ? {...b, ...a}
-      : undefined);
+    isString(b) || isArray(b)
+        ? b.concat(a)
+        : isObject(b)
+            ? { ...b, ...a }
+            : undefined);
 
 /**
  * merge performs a deep merge on all input objects and arrays.
@@ -261,22 +313,22 @@ export const concat = nary(a => b =>
  */
 export const merge = (...sources) =>
     reduce
-    ([])
-    ((acc, current) =>
-        isArray(current)
-            ? [...acc, ...current]
-            : isObject(current)
-            ? reduce
-            (acc)
-            ((a, c) =>
-                isObject(current[c]) && c in acc
-                    ? {...a, [c]: merge(acc[c], current[c])}
-                    : {...a, [c]: current[c]}
-            )
-            (Object.getOwnPropertyNames(current))
-            : {...acc, ...current}
-    )
-    (sources);
+        ([])
+        ((acc, current) =>
+            isArray(current)
+                ? [...acc, ...current]
+                : isObject(current)
+                    ? reduce
+                        (acc)
+                        ((a, c) =>
+                            isObject(current[c]) && c in acc
+                                ? { ...a, [c]: merge(acc[c], current[c]) }
+                                : { ...a, [c]: current[c] }
+                        )
+                        (Object.getOwnPropertyNames(current))
+                    : { ...acc, ...current }
+        )
+        (sources);
 
 /**
  * includes(a)(b) output is true if b includes a.
