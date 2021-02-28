@@ -1,5 +1,5 @@
-import { reduce, reduceRight, filterMap } from './list';
-import { isString, isArray, isObject, isNotArray } from './conditional';
+import { reduce, reduceRight, everyOf, someOf } from './list';
+import { isString, isArray, isObject } from './conditional';
 import { minusOneToUndefined, passThrough } from './utils';
 import { nary } from "./arity";
 
@@ -31,12 +31,12 @@ export const identity = anything => anything;
  * @HindleyMilner and :: [(a -> boolean)] -> a -> boolean
  * 
  * @pure
- * @param {function} boolFns
+ * @param {function} predicates
  * @param {*} anything
  * @return {*}
  * 
  * @example
- * import {and, isGreaterThan, isLesssThan} from '@7urtle/lambda';
+ * import {and, isGreaterThan, isLessThan} from '@7urtle/lambda';
  * 
  * const isEven = number => number % 2 === 0;
  * 
@@ -44,7 +44,7 @@ export const identity = anything => anything;
  * isSingleEvenDigit(8)
  * // => true
  */
-export const and = (...boolFns) => anything => boolFns.every(boolFn => boolFn(anything));
+export const and = (...predicates) => anything => everyOf(predicate => predicate(anything))(predicates);
 
 /**
  * or is a boolean-type function composition
@@ -57,7 +57,7 @@ export const and = (...boolFns) => anything => boolFns.every(boolFn => boolFn(an
  * @HindleyMilner and :: [(a -> boolean)] -> a -> boolean
  * 
  * @pure
- * @param {function} boolFns
+ * @param {function} predicates
  * @param {*} anything
  * @return {*}
  * 
@@ -70,7 +70,7 @@ export const and = (...boolFns) => anything => boolFns.every(boolFn => boolFn(an
  * isFizzBuzzNumber(15)
  * // => true
  */
-export const or = (...boolFns) => anything => boolFns.some(boolFn => boolFn(anything));
+export const or = (...predicates) => anything => someOf(predicate => predicate(anything))(predicates);
 
 /**
  * compose is a right-to-left function composition
