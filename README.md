@@ -95,3 +95,9 @@ alert(message); // HELLO WORLD
 ```
 
 Try @7urtle/lambda with online playground using [CodePen](https://codepen.io/martin-nov-k/pen/mdPZXKG).
+
+## Contributors
+
+[![Contributors](https://contributors-img.firebaseapp.com/image?repo=MeetMartin/lambda)](https://github.com/MeetMartin/lambda/graphs/contributors)
+
+Made with [contributors-img](https://contributors-img.firebaseapp.com).
