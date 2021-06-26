@@ -1,5 +1,32 @@
 import * as λ from '../src';
 
+test('both and(f,g)(x), and(g,f)(x) are equivalent to f(x) && g(x) as well as g(x) && f(x)', () => {
+  const f = λ.isGreaterThan(0);
+  const g = λ.isLessThan(10);
+  expect(λ.and(f, g)(8)).toBe(f(8) && g(8));
+  expect(λ.and(f, g)(8)).toBe(g(8) && f(8));
+  expect(λ.and(g, f)(8)).toBe(f(8) && g(8));
+  expect(λ.and(g, f)(8)).toBe(g(8) && f(8));
+});
+
+test('both or(f,g)(x), or(g,f)(x) are equivalent to f(x) || g(x) as well as g(x) || f(x)', () => {
+  const f = λ.isGreaterThan(10);
+  const g = λ.isZero;
+  expect(λ.or(f, g)(0)).toBe(f(0) || g(0));
+  expect(λ.or(f, g)(0)).toBe(g(0) || f(0));
+  expect(λ.or(g, f)(0)).toBe(f(0) || g(0));
+  expect(λ.or(g, f)(0)).toBe(g(0) || f(0));
+});
+
+test('and can be used together with or to encapsulate a predicate in a single function', () => {
+  const not = boolFn => x => !boolFn(x);
+  const isDivisibleBy = λ.nary(divisor => number => number % divisor === 0);
+  const isNotDivisibleBy = λ.nary(λ.compose(not, isDivisibleBy));
+  const isLeapYear = λ.or(λ.and(isDivisibleBy(4), isNotDivisibleBy(100)), isDivisibleBy(400));
+  const year = 2000;
+  expect(isLeapYear(year)).toBe((isDivisibleBy(4, year) && isNotDivisibleBy(100, year)) || isDivisibleBy(400, year));
+});
+
 test('isEqual output is true if strict equality between a and b is true.', () => {
   expect(λ.isEqual('something')('something')).toBe(true);
   expect(λ.isEqual('something')('something else')).toBe(false);

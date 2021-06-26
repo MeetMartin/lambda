@@ -1,4 +1,4 @@
-import { reduce, reduceRight, everyOf, someOf } from './list';
+import { reduce, reduceRight } from './list';
 import { isString, isArray, isObject } from './conditional';
 import { minusOneToUndefined, passThrough } from './utils';
 import { nary } from "./arity";
@@ -19,58 +19,6 @@ import { nary } from "./arity";
  * // => anything
  */
 export const identity = anything => anything;
-
-/**
- * and is a boolean-type function composition
- * where each boolean function is '&&'d together.
- * 
- * The boolean functions may be entered in any order.
- * 
- * and can be used together with or to encapsulate a predicate in a single function.
- * 
- * @HindleyMilner and :: [(a -> boolean)] -> a -> boolean
- * 
- * @pure
- * @param {function} predicates
- * @param {*} anything
- * @return {*}
- * 
- * @example
- * import {and, isGreaterThan, isLessThan} from '@7urtle/lambda';
- * 
- * const isEven = number => number % 2 === 0;
- * 
- * const isSingleEvenDigit = and(isEven, isGreaterThan(-10), isLessThan(10));
- * isSingleEvenDigit(8)
- * // => true
- */
-export const and = (...predicates) => anything => everyOf(predicate => predicate(anything))(predicates);
-
-/**
- * or is a boolean-type function composition
- * where each boolean function is '||'d together.
- * 
- * The boolean functions may be entered in any order.
- * 
- * or can be used together with and to encapsulate a predicate in a single function.
- * 
- * @HindleyMilner and :: [(a -> boolean)] -> a -> boolean
- * 
- * @pure
- * @param {function} predicates
- * @param {*} anything
- * @return {*}
- * 
- * @example
- * import {or} from '@7urtle/lambda';
- * 
- * const isDivisibleBy = divisor => number => number % divisor === 0;
- * const isFizzBuzzNumber = or(isDivisibleBy(3), isDivisibleBy(5));
- * 
- * isFizzBuzzNumber(15)
- * // => true
- */
-export const or = (...predicates) => anything => someOf(predicate => predicate(anything))(predicates);
 
 /**
  * compose is a right-to-left function composition
