@@ -3,15 +3,14 @@ import {isNothing} from "./conditional";
 import {nary} from "./arity";
 
 /**
- * Maybe is one of the simplest and well known monads. In other languages or libraries it is also sometimes
- * called Option. Maybe is also quite similar to our monad Either.
+ * Maybe is one of the simplest and well known monads. Maybe is also quite similar to our monad Either.
  *
  * Maybe expects a value as its input. It is Nothing if the value is null, undefined, or empty. It returns
  * Just for all other cases.
  *
  * Maybe is called Maybe because it maybe holds a value. You want to use Maybe for situations when you don't
- * know whether there is going to be an output. It makes the situation very obvious and forces its consumers
- * to safely deal with it.
+ * know whether there is going to be an input. For example for your API endpoint, it makes it very obvious
+ * that you service may not receive a value by mistake and forces the consumer of Maybe to safely deal with it.
  *
  * In other languages, Maybe monad can also be called Option monad or Nullable monad.
  *
@@ -56,7 +55,16 @@ import {nary} from "./arity";
  * // as an example you can use Maybe to help you work with DOM like this
  * Maybe.of(document.querySelector('#iexist')).map(a => a.offsetTop); // => Just(1240)
  * Maybe.of(document.querySelector('#idontexist')).map(a => a.offsetTop); // => Nothing
- * maybe('error: the object doesnt exist')(a => 'offset from top is ' + a)(Maybe.of(document.querySelector('#iexist')).map(a => a.offsetTop))
+ * maybe
+ * ('error: the object doesnt exist')
+ * (a => 'offset from top is ' + a)
+ * (Maybe.of(document.querySelector('#iexist')).map(a => a.offsetTop));
+ * 
+ * // to read API request you can use Maybe this way
+ * const getQuery = body =>
+ *   Maybe
+ *   .of(body.queryResult)
+ *   .flatMap(a => Maybe.of(a.queryText));
  */
 export const Maybe = {
   of: value => isNothing(value) ? Nothing(value) : Just(value)
