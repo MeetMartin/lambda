@@ -16,7 +16,10 @@
 export const nary = fn =>
     (...args) => args.length === 0
         ? fn()
-        : args.reduce((accumulator, current) => accumulator(current), fn);
+        : args.reduce(
+            (accumulator, current) => accumulator(current),
+            fn
+        );
 
 /**
  * curry takes n-ary function and allows it to be called both as curried and n-ary.
@@ -35,5 +38,5 @@ export const nary = fn =>
  */
 export const curry = fn =>
     (...args) => args.length >= fn.length
-        ? fn.apply(null, args)
-        : (...args2) => curry(fn).apply(null, args.concat(args2));
+        ? fn(...args)
+        : (...args2) => curry(fn)(...args, ...args2);
