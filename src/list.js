@@ -1,7 +1,6 @@
 import {lengthOf, minusOneToUndefined} from './utils';
 import {nary} from "./arity";
 import {upperCaseOf} from "./string";
-import {concat, merge} from "./core";
 
 /**
  * reduce executes input reducer function that over each member of input array [b] to output a single value. It is
@@ -494,3 +493,21 @@ export const groupBy = nary(fn => list =>
         (acc[fn(current)] = acc[fn(current)] || []).push(current) && acc
     )
     (list));
+
+/**
+ * randomOf outputs a random item from the input array.
+ *
+ * @HindleyMilner randomOf :: [a] -> a
+ *
+ * @pure
+ * @param {array} list
+ * @return {any}
+ *
+ * @example
+ * import {randomOf} from '@7urtle/lambda';
+ *
+ * randomOf([3, 4, 1, 8]); // => 8
+ * randomOf([3]); // => 3
+ * randomOf([]); // => undefined
+ */
+export const randomOf = list => list[Math.floor(Math.random() * lengthOf(list))];
