@@ -95,10 +95,10 @@ const Just = value => ({
  *
  * maybe can be called both as a curried unary function or as a standard ternary function.
  *
- * @HindleyMilner maybe :: a -> (b -> c) -> Maybe -> d
+ * @HindleyMilner maybe :: (a -> b) -> (c -> d) -> Maybe -> e
  *
  * @pure
- * @param {*} error
+ * @param {functioon} onNothing
  * @param {function} onJust
  * @param {Maybe} functorMaybe
  * @return {*}
