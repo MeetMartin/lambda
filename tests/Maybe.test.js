@@ -65,7 +65,7 @@ test('Maybe.of(Maybe -> Maybe -> c).ap(Maybe).ap(Maybe) provides applicative int
 });
 
 test('maybe outputs result of a function onJust if input Maybe is Just or outputs input error if input Maybe is Nothing.', () => {
-  expect(λ.maybe('error')(a => a)(λ.Maybe.of('abc'))).toBe('abc');
-  expect(λ.maybe('error')(a => a)(λ.Maybe.of(undefined))).toBe('error');
-  expect(λ.maybe('error')(a => a)(λ.Maybe.of('abc'))).toBe(λ.maybe('error', a => a, λ.Maybe.of('abc')));
+  expect(λ.maybe(() => 'error')(a => a)(λ.Maybe.of('abc'))).toBe('abc');
+  expect(λ.maybe(() => 'error')(a => a)(λ.Maybe.of(undefined))).toBe('error');
+  expect(λ.maybe(() => 'error')(a => a)(λ.Maybe.of('abc'))).toBe(λ.maybe('error', a => a, λ.Maybe.of('abc')));
 });

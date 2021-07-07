@@ -56,7 +56,7 @@ import {nary} from "./arity";
  * Maybe.of(document.querySelector('#iexist')).map(a => a.offsetTop); // => Just(1240)
  * Maybe.of(document.querySelector('#idontexist')).map(a => a.offsetTop); // => Nothing
  * maybe
- * ('error: the object doesnt exist')
+ * (() => 'error: the object doesnt exist')
  * (a => 'offset from top is ' + a)
  * (Maybe.of(document.querySelector('#iexist')).map(a => a.offsetTop));
  * 
@@ -106,14 +106,14 @@ const Just = value => ({
  * @example
  * import {maybe, Maybe} from '@7urtle/lambda';
  *
- * maybe('error')(a => a)(Maybe.of('abc')); // => 'abc'
- * maybe('error')(a => a)(Maybe.of(undefined)); // => 'error'
- * maybe('error')(a => a)(Maybe.of(undefined)) === Maybe.of(undefined).isNothing() ? 'error' ? 'not error';
+ * maybe(() => 'error')(value => value)(Maybe.of('abc')); // => 'abc'
+ * maybe(() => 'error')(value => value)(Maybe.of(undefined)); // => 'error'
+ * maybe(() => 'error')(() => 'not error)(Maybe.of(undefined)) === Maybe.of(undefined).isNothing() ? 'error' ? 'not error';
  *
  * // maybe can be called both as a curried unary function or as a standard ternary function
- * maybe('error')(a => a)(Maybe.of('abc')) === maybe('error', a => a, Maybe.of('abc'));
+ * maybe(() => 'error')(value => value)(Maybe.of('abc')) === maybe('error', value => value, Maybe.of('abc'));
  */
-export const maybe = nary(error => onJust => functorMaybe =>
+export const maybe = nary(onNothing => onJust => functorMaybe =>
   functorMaybe.isNothing()
-    ? error
+    ? onNothing()
     : onJust(functorMaybe.value));
