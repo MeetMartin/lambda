@@ -177,9 +177,18 @@ test('memoize uses input memory to save output of input function and then uses i
 test('memo takes input function and returns it enhanced by memoization which ensures that each result is always remembered internally and executed only once.', () => {
   const addTwo = a => a + 2;
   let count = 0;
+  let tracker = 0;
   const increaseCount = () => ++count;
+  const memoAddOne = λ.memo(a => ++tracker && a + 1);
   const memoAddTwo = λ.memo(addTwo);
   const memoAddThree = λ.memo(a => a + 3);
+
+  memoAddOne(1);
+  memoAddOne(1);
+  memoAddOne(2);
+  memoAddOne(2);
+  expect(memoAddOne(2)).toBe(3);
+  expect(tracker).toBe(2);
 
   expect(memoAddTwo(1)).toBe(3);
   expect(memoAddThree(1)).toBe(4);
@@ -192,4 +201,13 @@ test('memo takes input function and returns it enhanced by memoization which ens
   memoIncreaseCount();
   memoIncreaseCount();
   expect(count).toBe(3);
+});
+
+test('memo does not have share memory issue.', () => {
+  const plus5 = λ.memo(a => a + 5);
+  const minus5 = λ.memo(a => a - 5);
+  expect(plus5(5)).toBe(10);
+  expect(plus5(5)).toBe(10)
+  expect(minus5(5)).toBe(0);
+  expect(minus5(5)).toBe(0);
 });
