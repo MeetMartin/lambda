@@ -23,8 +23,8 @@ import {isFunction} from "./conditional";
  *     setTimeout(() => Math.random() > 0.5 ? resolve('random success') : reject('random failure'), 10)
  * );
  *
- * // we could also create AsyncEffect from a JavaScript Promise
- * const myPromise = new Promise((resolve, reject) =>
+ * // we could also create AsyncEffect from a function returning JavaScript Promise
+ * const myPromise = () => new Promise((resolve, reject) =>
  *     setTimeout(() => Math.random() > 0.5 ? resolve('random success') : reject('random failure'), 10)
  * );
  * const promiseAsyncEffect = AsyncEffect.ofPromise(myPromise);
@@ -85,7 +85,7 @@ import {isFunction} from "./conditional";
  *
  * // axios example
  * import axios from 'axios';
- * const getFromURL = url => AsyncEffect.ofPromise(axios.get(url));
+ * const getFromURL = url => AsyncEffect.ofPromise(() => axios.get(url));
  *
  * getFromURL('/my/ajax/url')
  * .trigger
@@ -117,7 +117,7 @@ export const AsyncEffect = {
     }
   })),
   ofPromise: promise => AsyncEffect.of(reject => resolve =>
-      promise.then(resolve).catch(reject)
+      promise().then(resolve).catch(reject)
   )
 };
 

@@ -19,16 +19,16 @@ test('AsyncEffect.of(a -> b -> c).trigger(e -> f)(g -> h) for resolving curried 
   });
 });
 
-test('AsyncEffect.ofPromise(Promise) creates AsyncEffect from a promise.', done => {
-  const successPromise = new Promise((resolve, reject) => resolve('7urtle'));
+test('AsyncEffect.ofPromise(a -> Promise) creates AsyncEffect from a promise.', done => {
+  const successPromise = () => new Promise((resolve, reject) => resolve('7urtle'));
   λ.AsyncEffect.ofPromise(successPromise).trigger(error => error)(result => {
     expect(result).toBe('7urtle');
     done();
   });
 });
 
-test('AsyncEffect.ofPromise(Promise) rejects for a failed promise.', done => {
-  const failedPromise = new Promise((resolve, reject) => reject('error'));
+test('AsyncEffect.ofPromise(a -> Promise) rejects for a failed promise.', done => {
+  const failedPromise = () => new Promise((resolve, reject) => reject('error'));
   λ.AsyncEffect.ofPromise(failedPromise).trigger(error => {
     expect(error).toBe('error');
     done();
