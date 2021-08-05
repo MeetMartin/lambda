@@ -112,6 +112,22 @@ test('isAtMost output is true if b is less or equal to a.', () => {
   expect(λ.isAtMost(2)(1)).toBe(λ.isAtMost(2, 1));
 });
 
+test('isBetween output is true if c is between a and b.', () => {
+  expect(λ.isBetween(1)(3)(2)).toBe(true);
+  expect(λ.isBetween(3)(1)(2)).toBe(true);
+  expect(λ.isBetween(1)(3)(3)).toBe(false);
+  expect(λ.isBetween(1)(3)(4)).toBe(false);
+  expect(λ.isBetween(1)(3)(2)).toBe(λ.isBetween(1, 3, 2));
+});
+
+test('isInRange output is true if c is in range of a and b.', () => {
+  expect(λ.isInRange(1)(3)(2)).toBe(true);
+  expect(λ.isInRange(3)(1)(2)).toBe(true);
+  expect(λ.isInRange(1)(3)(3)).toBe(true);
+  expect(λ.isInRange(1)(3)(4)).toBe(false);
+  expect(λ.isInRange(1)(3)(2)).toBe(λ.isInRange(1, 3, 2));
+});
+
 test('isTypeOf output is true if b is a type of a.', () => {
   expect(λ.isTypeOf('number')(1)).toBe(true);
   expect(λ.isTypeOf('string')(1)).toBe(false);

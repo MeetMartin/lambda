@@ -295,6 +295,66 @@ export const isAtLeast = nary(a => b => b >= a);
 export const isAtMost = nary(a => b => b <= a);
 
 /**
+ * isBetween output is true if c is between a and b.
+ *
+ * isBetween can be called both as a curried unary function or as a standard ternary function.
+ *
+ * @HindleyMilner isBetween :: a -> b -> c -> boolean
+ *
+ * @pure
+ * @param {number} a
+ * @param {number} b
+ * @param {number} c
+ * @return {boolean}
+ *
+ * @example
+ * import {isBetween} from '@7urtle/lambda';
+ *
+ * isBetween(1)(3)(2); // => true
+ * isBetween(3)(1)(2); // => true
+ * isBetween(1)(3)(3); // => false
+ * isBetween(1)(3)(4); // => false
+ *
+ * // isBetween can be called both as a curried unary function or as a standard ternary function
+ * isBetween(1)(3)(2) === isBetween(1, 3, 2);
+ */
+export const isBetween = nary(a => b => c =>
+    a > b
+    ? a > c && b < c
+    : a < c && b > c
+);
+
+/**
+ * isInRange output is true if c is in range of a and b.
+ *
+ * isInRange can be called both as a curried unary function or as a standard ternary function.
+ *
+ * @HindleyMilner isInRange :: a -> b -> c -> boolean
+ *
+ * @pure
+ * @param {number} a
+ * @param {number} b
+ * @param {number} c
+ * @return {boolean}
+ *
+ * @example
+ * import {isInRange} from '@7urtle/lambda';
+ *
+ * isInRange(1)(3)(2); // => true
+ * isInRange(3)(1)(2); // => true
+ * isInRange(1)(3)(3); // => true
+ * isInRange(1)(3)(4); // => false
+ *
+ * // isInRange can be called both as a curried unary function or as a standard ternary function
+ * isInRange(1)(3)(2) === isInRange(1, 3, 2);
+ */
+ export const isInRange = nary(a => b => c =>
+    a > b
+    ? a >= c && b <= c
+    : a <= c && b >= c
+);
+
+/**
  * isTypeOf output is true if b is a type of a.
  *
  * isTypeOf can be called both as a curried unary function or as a standard binary function.
