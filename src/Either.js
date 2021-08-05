@@ -1,5 +1,6 @@
-import {deepInspect} from "./utils";
-import {nary} from "./arity";
+import { deepInspect } from './utils';
+import { nary } from './arity';
+import { reduce } from './list';
 
 /**
  * Either is an excellent monad for handling error states and it is fairly similar to our monad Maybe. Either.Failure
@@ -122,4 +123,82 @@ const Success = value => ({
 export const either = nary(onFailure => onSuccess => functorEither =>
   functorEither.isFailure()
     ? onFailure(functorEither.value)
-    : onSuccess(functorEither.value));
+    : onSuccess(functorEither.value)
+);
+
+/**
+ * mergeEithers outputs Either of array with all Either values depending whether they are Success or Failure.
+ *
+ * @HindleyMilner mergeEithers :: ([Either]) -> Either
+ *
+ * @pure
+ * @param {Either} eithers
+ * @return {Either}
+ *
+ * @example
+ * import { mergeEithers, Either } from '@7urtle/lambda';
+ *
+ * mergeEithers(Either.of('abc'), Either.of('def')); //  => Either.Success(['abc', 'def'])
+ * mergeEithers(Either.of('abc'), Either.Failure('def')); // => Failure(['def'])
+ * mergeEithers(Either.Failure('abc'), Either.of('def')); // => Failure(['abc'])
+ * mergeEithers(Either.Failure('abc'), Either.Failure('def')); // => Failure(['abc', 'def'])
+ */
+export const mergeEithers = (...eithers) =>
+  reduce
+  (Either.Success([]))
+  ((accumulator, current) =>
+    current.isFailure()
+    ? accumulator.isFailure() // current Either is Failure
+      ? Either.Failure([...accumulator.value, current.value]) // accumulator is Failure and current is Failure => update accumulator
+      : Either.Failure([current.value]) // accumulator is Success and current is Failure => return first Failure
+    : accumulator.isFailure() // current Either is Success
+      ? accumulator // accumulator is Failure and current is Success => return accumulator
+      : Either.Success([...accumulator.value, current.value]) // accumulator is Success and current is Success => update accumulator
+  )
+  (eithers);
+
+/**
+ * validateEithers outputs Either of input value if all input functions returns Success or Failure
+ * with array of error messages.
+ *
+ * @HindleyMilner validateEithers :: ([a -> b]) -> a -> Either
+ *
+ * @pure
+ * @param {functions} fns
+ * @param {*} input
+ * @return {Either}
+ *
+ * @example
+ * import { validateEithers, Either, isAtLeast, lengthOf } from '@7urtle/lambda';
+ *
+ * // mergeEithers is great to be used for validations
+ * const isPasswordLongEnough = password =>
+ *  isAtLeast(6)(lengthOf(password))
+ *  ? Either.Success(password)
+ *  : Either.Failure('Password must have more than 6 characters.');
+ * 
+ * const isPasswordStrongEnough = password =>
+ *  /[\W]/.test(password)
+ *  ? Either.Success(password)
+ *  : Either.Failure('Password must contain special characters.');
+ * 
+ * const validatePassword = validateEithers(isPasswordLongEnough, isPasswordStrongEnough);
+ * 
+ * validatePassword('LongPa$$word'); // => Success('LongPa$$word')
+ * validatePassword('Pa$$'); // => Failure(['Password must have more than 6 characters.'])
+ * validatePassword('LongPassword'); // => Failure(['Password must contain special characters.'])
+ * validatePassword('Pass'); // => Failure(['Password must have more than 6 characters.', 'Password must contain special characters.'])
+ */
+export const validateEithers = (...fns) => input =>
+  reduce
+  (Either.Success(input))
+  ((accumulator, currentFn) =>
+    (currentResult =>
+      currentResult.isFailure()
+      ? accumulator.isFailure() // currentResult Either is Failure
+        ? Either.Failure([...accumulator.value, currentResult.value]) // accumulator is Failure and currentResult is Failure => update accumulator
+        : Either.Failure([currentResult.value]) // accumulator is Success and currentResult is Failure => return first Failure
+      : accumulator // currentResult Either is Success
+    )(currentFn(input))
+  )
+  (fns);

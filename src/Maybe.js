@@ -1,6 +1,7 @@
-import {deepInspect} from "./utils";
-import {isNothing} from "./conditional";
-import {nary} from "./arity";
+import { deepInspect } from './utils';
+import { nary } from './arity';
+import { isNothing } from './conditional';
+import { reduce } from './list';
 
 /**
  * Maybe is one of the simplest and well known monads. Maybe is also quite similar to our monad Either.
@@ -67,7 +68,9 @@ import {nary} from "./arity";
  *   .flatMap(a => Maybe.of(a.queryText));
  */
 export const Maybe = {
-  of: value => isNothing(value) ? Nothing(value) : Just(value)
+  of: value => isNothing(value) ? Nothing(value) : Just(value),
+  Just: value => Just(value),
+  Nothing: value => Nothing(value),
 };
 
 const Nothing = value => ({
@@ -117,3 +120,32 @@ export const maybe = nary(onNothing => onJust => functorMaybe =>
   functorMaybe.isNothing()
     ? onNothing()
     : onJust(functorMaybe.value));
+
+/**
+ * mergeMaybes outputs Maybe of array with all Maybe values depending whether they are Nothing or Just.
+ *
+ * @HindleyMilner mergeMaybes :: ([Maybe]) -> Maybe
+ *
+ * @pure
+ * @param {Maybe} maybes
+ * @return {Maybe}
+ *
+ * @example
+ * import { mergeMaybes, Either } from '@7urtle/lambda';
+ *
+ * mergeMaybes(Maybe.of('abc'), Maybe.of('def')); //  => Just(['abc', 'def'])
+ * mergeMaybes(Maybe.of('abc'), Maybe.Nothing()); // => Nothing
+ * mergeMaybes(Maybe.Nothing(), Maybe.of('def')); // => Nothing
+ * mergeMaybes(Maybe.Nothing(), Maybe.Nothing()); // => Nothing
+ */
+export const mergeMaybes = (...maybes) =>
+  reduce
+  (Maybe.Just([]))
+  ((accumulator, current) =>
+    current.isNothing()
+    ? Maybe.Nothing()
+    : accumulator.isNothing()
+      ? Maybe.Nothing()
+      : Maybe.Just([...accumulator.value, current.value])
+  )
+  (maybes);;

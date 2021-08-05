@@ -91,3 +91,29 @@ test('either outputs result of a function onSuccess if input Either is Success o
   expect(λ.either(a => 'error: ' + a)(a => 'success: ' + a)(λ.Either.Failure(':('))).toBe('error: :(');
   expect(λ.either(a => 'error: ' + a)(a => 'success: ' + a)(λ.Either.of('abc'))).toBe(λ.either(a => 'error: ' + a, a => 'success: ' + a, λ.Either.of('abc')));
 });
+
+test('mergeEithers outputs Either of array with all Either values depending whether they are Success or Failure.', () => {
+  expect(λ.mergeEithers(λ.Either.of('abc'), λ.Either.of('def')).inspect()).toBe("Success(['abc', 'def'])");
+  expect(λ.mergeEithers(λ.Either.of('abc'), λ.Either.Failure('def')).inspect()).toBe("Failure(['def'])");
+  expect(λ.mergeEithers(λ.Either.Failure('abc'), λ.Either.of('def')).inspect()).toBe("Failure(['abc'])");
+  expect(λ.mergeEithers(λ.Either.Failure('abc'), λ.Either.Failure('def')).inspect()).toBe("Failure(['abc', 'def'])");
+});
+
+test('validateEithers outputs Either of input value if all input functions returns Success or Failure with array of error messages.', () => {
+  const isPasswordLongEnough = password =>
+    password.length > 6
+    ? λ.Either.Success(password)
+    : λ.Either.Failure('Password must have more than 6 characters.');
+  
+  const isPasswordStrongEnough = password =>
+    /[\W]/.test(password)
+    ? λ.Either.Success(password)
+    : λ.Either.Failure('Password must contain special characters.');
+
+  const validatePassword = λ.validateEithers(isPasswordLongEnough, isPasswordStrongEnough);
+
+  expect(validatePassword('LongPa$$word').inspect()).toBe("Success('LongPa$$word')");
+  expect(validatePassword('Pa$$').inspect()).toBe("Failure(['Password must have more than 6 characters.'])");
+  expect(validatePassword('LongPassword').inspect()).toBe("Failure(['Password must contain special characters.'])");
+  expect(validatePassword('Pass').inspect()).toBe("Failure(['Password must have more than 6 characters.', 'Password must contain special characters.'])");
+});

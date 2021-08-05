@@ -69,3 +69,10 @@ test('maybe outputs result of a function onJust if input Maybe is Just or output
   expect(λ.maybe(() => 'error')(a => a)(λ.Maybe.of(undefined))).toBe('error');
   expect(λ.maybe(() => 'error')(a => a)(λ.Maybe.of('abc'))).toBe(λ.maybe('error', a => a, λ.Maybe.of('abc')));
 });
+
+test('mergeMaybes outputs Maybe of array with all Maybe values depending whether they are Nothing or Just.', () => {
+  expect(λ.mergeMaybes(λ.Maybe.of('abc'), λ.Maybe.of('def')).inspect()).toBe("Just(['abc', 'def'])");
+  expect(λ.mergeMaybes(λ.Maybe.of('abc'), λ.Maybe.Nothing()).inspect()).toBe("Nothing");
+  expect(λ.mergeMaybes(λ.Maybe.Nothing(), λ.Maybe.of('def')).inspect()).toBe("Nothing");
+  expect(λ.mergeMaybes(λ.Maybe.Nothing(), λ.Maybe.Nothing()).inspect()).toBe("Nothing");
+});
