@@ -258,6 +258,9 @@ export const concat = nary(a => b =>
  *
  * merge(list1,list2);
  * // => ['a', 'b', 1, 2]
+ * 
+ * merge(list1, obj1)
+ * // => {"0": "a", "1": "b", "a": "a", "c": ["a"]}
  */
 export const merge = (...sources) =>
     reduce

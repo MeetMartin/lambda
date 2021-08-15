@@ -123,12 +123,22 @@ test('merge performs a deep merge on all input objects and arrays.', () => {
   const obj1 = { a: 'a', c: ['a'] };
   const obj2 = { b: a => a, d: ['a', 'b'] };
   const obj3 = { a: 'c', c: ['c'] };
+  const obj4 = { a: 'c', c: [], d: {} };
   expect(JSON.stringify(λ.merge(obj1, obj2, obj3)))
     .toBe(JSON.stringify({ "a": "c", "b": a => a, "c": ["a", "c"], "d": ["a", "b"] }));
+  expect(λ.merge(obj1, obj4)).toEqual({ a: 'c', c: ['a'], d: {} });
 
   const list1 = ['a', 'b'];
   const list2 = [1, 2];
   expect(λ.merge(list1, list2)).toEqual(['a', 'b', 1, 2]);
+
+  expect(λ.merge(list1, obj1)).toEqual({"0": "a", "1": "b", "a": "a", "c": ["a"]});
+
+  expect(λ.merge([])).toEqual([]);
+  expect(λ.merge({})).toEqual([]);
+  expect(λ.merge({}, [])).toEqual([]);
+  expect(λ.merge([], {})).toEqual([]);
+  expect(λ.merge(list1)).toEqual(list1);
 });
 
 test('includes output is true if b includes a.', () => {
