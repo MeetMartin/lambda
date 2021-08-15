@@ -50,3 +50,38 @@ test('No input function is executed until trigger is called.', () => {
   λ.SyncEffect.of(() => ++some).map(a => b => a + b).ap(λ.SyncEffect.of(() => ++some)).trigger();
   expect(some).toBe(12);
 });
+
+test('syncEffectToMaybe converts any SyncEffect monad to a Maybe monad.', () => {
+  expect(λ.syncEffectToMaybe(λ.SyncEffect.of(() => '7urtle')).isJust()).toBe(true);
+  expect(λ.syncEffectToMaybe(λ.SyncEffect.of(() => undefined)).isNothing()).toBe(true);
+  expect(λ.syncEffectToMaybe(λ.SyncEffect.of(() => '7urtle')).value).toBe('7urtle');
+  expect(λ.syncEffectToMaybe(λ.SyncEffect.of(() => { throw 'I am an error.'; })).isNothing()).toBe(true);
+  expect(λ.syncEffectToMaybe(λ.SyncEffect.of(() => { throw 'I am an error.'; })).value).toBe('I am an error.');
+});
+
+test('syncEffectToEither converts any SyncEffect monad to an Either monad.', () => {
+  expect(λ.syncEffectToEither(λ.SyncEffect.of(() => '7urtle')).isSuccess()).toBe(true);
+  expect(λ.syncEffectToEither(λ.SyncEffect.of(() => '7urtle')).value).toBe('7urtle');
+  expect(λ.syncEffectToEither(λ.SyncEffect.of(() => { throw 'I am an error.'; })).isFailure()).toBe(true);
+  expect(λ.syncEffectToEither(λ.SyncEffect.of(() => { throw 'I am an error.'; })).value).toBe('I am an error.');
+});
+
+test('syncEffectToAsyncEffect converts any SyncEffect monad to a AsyncEffect monad and resolves.', done => {
+  λ.syncEffectToAsyncEffect(λ.SyncEffect.of(() => '7urtle'))
+    .trigger
+    (error => { throw error; })
+    (success => {
+      expect(success).toBe('7urtle');
+      done();
+    });
+});
+
+test('syncEffectToAsyncEffect converts any SyncEffect monad to a AsyncEffect monad and rejects.', done => {
+  λ.syncEffectToAsyncEffect(λ.SyncEffect.of(() => { throw 'I am an error.'; }))
+    .trigger
+    (error => {
+      expect(error).toBe('I am an error.');
+      done();
+    })
+    (() => { throw 'Unexpected success.'; });
+});

@@ -1,4 +1,7 @@
-import {deepInspect} from "./utils";
+import { deepInspect } from "./utils";
+import { Maybe } from './Maybe';
+import { Either } from './Either';
+import { AsyncEffect } from './AsyncEffect';
 
 /**
  * SyncEffect is a monad that allows you to safely work with synchronous side effects in JavaScript.
@@ -66,3 +69,68 @@ const getSyncEffect = trigger => ({
   flatMap: fn => getSyncEffect(() => getSyncEffect(trigger).map(fn).trigger().trigger()),
   ap: f => getSyncEffect(trigger).flatMap(fn => f.map(fn))
 });
+
+/**
+ * syncEffectToMaybe converts any SyncEffect monad to a Maybe monad with
+ * Maybe Nothing if SyncEffect throws an error.
+ *
+ * @HindleyMilner syncEffectToMaybe :: SyncEffect -> Maybe
+ *
+ * @pure
+ * @param {SyncEffect} syncEffectMonad
+ * @return {Maybe}
+ *
+ * @example
+ * import { syncEffectToMaybe, SyncEffect } from '@7urtle/lambda';
+ *
+ * eitherToMaybe(SyncEffect.of(() => '7urtle')); // => Just('7urtle')
+ * eitherToMaybe(SyncEffect.of(() => undefined)); // => Nothing
+ * eitherToMaybe(SyncEffect.of(() => { throw 'I am an error.'; }))); // => Nothing
+ */
+export const syncEffectToMaybe = syncEffectMonad => {
+  try {
+    return Maybe.of(syncEffectMonad.trigger());
+  } catch(error) {
+    return Maybe.Nothing(error);
+  }
+};
+
+/**
+ * syncEffectToEither converts any SyncEffect monad to an Either monad with
+ * Either Failure containing SyncEffect thrown error.
+ *
+ * @HindleyMilner syncEffectToEither :: SyncEffect -> Either
+ *
+ * @pure
+ * @param {SyncEffect} syncEffectMonad
+ * @return {Either}
+ *
+ * @example
+ * import { syncEffectToEither, SyncEffect } from '@7urtle/lambda';
+ *
+ * syncEffectToEither(SyncEffect.of(() => '7urtle')); // => Success('7urtle')
+ * syncEffectToEither(SyncEffect.of(() => { throw 'I am an error.'; })); // => Failure('I am an error.')
+ */
+export const syncEffectToEither = syncEffectMonad => Either.try(syncEffectMonad.trigger);
+
+/**
+ * syncEffectToAsyncEffect converts any SyncEffect monad to a AsyncEffect monad with
+ * AsyncEffect rejecting thrown error.
+ *
+ * @HindleyMilner syncEffectToAsyncEffect :: SyncEffect -> AsyncEffect
+ *
+ * @pure
+ * @param {SyncEffect} syncEffectMonad
+ * @return {AsyncEffect}
+ *
+ * @example
+ * import { syncEffectToAsyncEffect, SyncEffect } from '@7urtle/lambda';
+ *
+ * syncEffectToAsyncEffect(SyncEffect.of(() => '7urtle')); // resolves to '7urtle'
+ * syncEffectToAsyncEffect(SyncEffect.of(() => { throw 'I am an error.'; })); // rejects 'I am an error.'
+ */
+ export const syncEffectToAsyncEffect = syncEffectMonad => 
+  AsyncEffect
+  .of(_ => resolve =>
+    resolve(syncEffectMonad.trigger())
+  );

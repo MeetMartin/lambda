@@ -2,6 +2,9 @@ import { deepInspect } from './utils';
 import { nary } from './arity';
 import { isNothing } from './conditional';
 import { reduce } from './list';
+import { Either } from './Either';
+import { SyncEffect } from './SyncEffect';
+import { AsyncEffect } from './AsyncEffect';
 
 /**
  * Maybe is one of the simplest and well known monads. Maybe is also quite similar to our monad Either.
@@ -148,4 +151,70 @@ export const mergeMaybes = (...maybes) =>
       ? Maybe.Nothing()
       : Maybe.Just([...accumulator.value, current.value])
   )
-  (maybes);;
+  (maybes);
+
+/**
+ * maybeToEither converts any Maybe monad to an Either monad with
+ * 'Maybe is Nothing.' Failure if the Maybe is Nothing.
+ *
+ * @HindleyMilner maybeToEither :: Maybe -> Either
+ *
+ * @pure
+ * @param {Maybe} maybeMonad
+ * @return {Either}
+ *
+ * @example
+ * import { maybeToEither, Maybe } from '@7urtle/lambda';
+ *
+ * maybeToEither(Maybe.of('7urtle')); // => Success('7urtle')
+ * maybeToEither(Maybe.of(undefined)); // => Failure('Maybe is Nothing.')
+ */
+export const maybeToEither = maybeMonad =>
+  maybe
+  (() => Either.Failure('Maybe is Nothing.'))
+  (value => Either.Success(value))
+  (maybeMonad);
+
+/**
+ * maybeToSyncEffect converts any Maybe monad to an SyncEffect monad with
+ * 'Maybe is Nothing.' thrown error if the Maybe is Nothing.
+ *
+ * @HindleyMilner maybeToSyncEffect :: Maybe -> SyncEffect
+ *
+ * @pure
+ * @param {Maybe} maybeMonad
+ * @return {SyncEffect}
+ *
+ * @example
+ * import { maybeToSyncEffect, Maybe } from '@7urtle/lambda';
+ *
+ * maybeToSyncEffect(Maybe.of('7urtle')).trigger(); // => '7urtle'
+ * maybeToSyncEffect(Maybe.of(undefined)).trigger(); // throws 'Maybe is Nothing.'
+ */
+export const maybeToSyncEffect = maybeMonad =>
+  maybe
+  (() => SyncEffect.of(() => { throw 'Maybe is Nothing.' }))
+  (value => SyncEffect.of(() => value))
+  (maybeMonad);
+
+/**
+ * maybeToAsyncEffect converts any Maybe monad to an AsyncEffect monad with
+ * 'Maybe is Nothing.' reject if the Maybe is Nothing.
+ *
+ * @HindleyMilner maybeToAsyncEffect :: Maybe -> AsyncEffect
+ *
+ * @pure
+ * @param {Maybe} maybeMonad
+ * @return {AsyncEffect}
+ *
+ * @example
+ * import { maybeToAsyncEffect, Maybe } from '@7urtle/lambda';
+ *
+ * maybeToAsyncEffect(Maybe.of('7urtle')); // resolves to '7urtle'
+ * maybeToAsyncEffect(Maybe.of(undefined)); // rejects 'Maybe is Nothing.'
+ */
+export const maybeToAsyncEffect = maybeMonad =>
+  maybe
+  (() => AsyncEffect.of(reject => _ => reject('Maybe is Nothing.')))
+  (value => AsyncEffect.of(_ => resolve => resolve(value)))
+  (maybeMonad);

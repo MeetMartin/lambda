@@ -1,6 +1,9 @@
 import { deepInspect } from './utils';
 import { nary } from './arity';
 import { reduce } from './list';
+import { Maybe } from './Maybe';
+import { SyncEffect } from './SyncEffect';
+import { AsyncEffect } from './AsyncEffect';
 
 /**
  * Either is an excellent monad for handling error states and it is fairly similar to our monad Maybe. Either.Failure
@@ -71,8 +74,8 @@ export const Either = {
   try: fn => {
     try {
       return Success(fn());
-    } catch(e) {
-      return Failure(e.message);
+    } catch(error) {
+      return Failure(error.message || error);
     }
   }
 };
@@ -202,3 +205,71 @@ export const validateEithers = (...fns) => input =>
     )(currentFn(input))
   )
   (fns);
+
+/**
+ * eitherToMaybe converts any Either monad to a Maybe monad with
+ * Maybe Nothing if Either is Failure.
+ *
+ * @HindleyMilner eitherToMaybe :: Either -> Maybe
+ *
+ * @pure
+ * @param {Either} eitherMonad
+ * @return {Maybe}
+ *
+ * @example
+ * import { eitherToMaybe, Either } from '@7urtle/lambda';
+ *
+ * eitherToMaybe(Either.Success('7urtle')); // => Just('7urtle')
+ * eitherToMaybe(Either.Success(undefined)); // => Nothing
+ * eitherToMaybe(Either.Failure('I am an error.')); // => Nothing
+ * eitherToMaybe(Either.Failure('I am an error.')).value; // => 'I am an error.'
+ */
+export const eitherToMaybe = eitherMonad =>
+  either
+  (error => Maybe.Nothing(error))
+  (value => Maybe.of(value))
+  (eitherMonad);
+
+/**
+ * eitherToSyncEffect converts any Either monad to a SyncEffect monad with
+ * error thrown on trigger if Either is Failure.
+ *
+ * @HindleyMilner eitherToSyncEffect :: Either -> SyncEffect
+ *
+ * @pure
+ * @param {Either} eitherMonad
+ * @return {SyncEffect}
+ *
+ * @example
+ * import { eitherToSyncEffect, Either } from '@7urtle/lambda';
+ *
+ * eitherToSyncEffect(Either.Success('7urtle')).trigger(); // => '7urtle'
+ * eitherToSyncEffect(Either.Failure('I am an error.')).trigger(); // throws 'I am an error.'
+ */
+export const eitherToSyncEffect = eitherMonad =>
+  either
+  (error => SyncEffect.of(() => { throw error; }))
+  (value => SyncEffect.of(() => value))
+  (eitherMonad);
+
+/**
+ * eitherToAsyncEffect converts any Either monad to a AsyncEffect monad with
+ * rejected error if Either is Failure.
+ *
+ * @HindleyMilner eitherToAsyncEffect :: Either -> AsyncEffect
+ *
+ * @pure
+ * @param {Either} eitherMonad
+ * @return {AsyncEffect}
+ *
+ * @example
+ * import { eitherToAsyncEffect, Either } from '@7urtle/lambda';
+ *
+ * eitherToAsyncEffect(Either.Success('7urtle')); // resolves to '7urtle'
+ * eitherToAsyncEffect(Either.Failure('I am an error.')); // rejects 'I am an error.'
+ */
+export const eitherToAsyncEffect = eitherMonad =>
+  either
+  (error => AsyncEffect.of(reject => _ => reject(error)))
+  (value => AsyncEffect.of(_ => resolve => resolve(value)))
+  (eitherMonad);
