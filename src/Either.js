@@ -138,7 +138,7 @@ export const either = nary(onFailure => onSuccess => functorEither =>
  * @example
  * import { mergeEithers, Either } from '@7urtle/lambda';
  *
- * mergeEithers(Either.of('abc'), Either.of('def')); //  => Either.Success(['abc', 'def'])
+ * mergeEithers(Either.of('abc'), Either.of('def')); //  => Success(['abc', 'def'])
  * mergeEithers(Either.of('abc'), Either.Failure('def')); // => Failure(['def'])
  * mergeEithers(Either.Failure('abc'), Either.of('def')); // => Failure(['abc'])
  * mergeEithers(Either.Failure('abc'), Either.Failure('def')); // => Failure(['abc', 'def'])
