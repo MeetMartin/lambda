@@ -11,7 +11,7 @@ test('SyncEffect.of(() -> a).trigger() executes function provided as input of Sy
 test('SyncEffect.of(() -> a).map(b -> c) composes function over SyncEffect input function.', () => {
   expect(λ.SyncEffect.of(() => '7turtle').map(a => a + 's').trigger()).toBe('7turtles');
   expect(λ.SyncEffect.of(() => 1).map(a => a + 1).trigger()).toBe(2);
-  expect(λ.SyncEffect.of(() => throw 'error').map(a => a + 1).trigger).toThrow('error');
+  expect(λ.SyncEffect.of(() => { throw 'error'; }).map(a => a + 1).trigger).toThrow('error');
 });
 
 test('SyncEffect.of(() -> a).map(b -> SyncEffect) outputs SyncEffect(SyncEffect).', () => {
@@ -20,8 +20,8 @@ test('SyncEffect.of(() -> a).map(b -> SyncEffect) outputs SyncEffect(SyncEffect)
 
 test('SyncEffect.of(() -> a).flatMap(b -> SyncEffect) outputs SyncEffect.', () => {
   expect(λ.SyncEffect.of(() => '7turtle').flatMap(a => λ.SyncEffect.of(() => a + 's')).trigger()).toBe('7turtles');
-  expect(λ.SyncEffect.of(() => throw 'error').flatMap(a => λ.SyncEffect.of(() => a + 's')).trigger).toThrow('error');
-  expect(λ.SyncEffect.of(() => '7turtle').flatMap(() => λ.SyncEffect.of(() => throw 'error')).trigger).toThrow('error');
+  expect(λ.SyncEffect.of(() => { throw 'error'; }).flatMap(a => λ.SyncEffect.of(() => a + 's')).trigger).toThrow('error');
+  expect(λ.SyncEffect.of(() => '7turtle').flatMap(() => λ.SyncEffect.of(() => { throw 'error'; })).trigger).toThrow('error');
 });
 
 test('SyncEffect.of(() -> a).map(a -> b).ap(SyncEffect) provides applicative ability to apply functors to each other.', () => {
