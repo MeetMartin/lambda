@@ -293,3 +293,12 @@ test('isJust returns true if input is not null, undefined or empty string or emp
   expect(λ.isJust([])).toBe(false);
   expect(λ.isJust({})).toBe(false);
 });
+
+test('when tests anything argument by passing it to predicate function.', () => {
+  const predicate = a => a > 1;
+  const whenTrueFn = a => a * 2;
+
+  expect(λ.when(predicate)(whenTrueFn)(2)).toBe(4);
+  expect(λ.when(predicate)(whenTrueFn)(1)).toBe(1);
+  expect(λ.when(predicate)(whenTrueFn)(2)).toBe(λ.when(predicate, whenTrueFn, 2));
+});

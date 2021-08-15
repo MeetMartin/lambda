@@ -697,6 +697,8 @@ export const isLength = nary(a => b => isEqual(lengthOf(b))(a));
 
 /**
  * isNotLength output is true if b is not a length of a.
+ * 
+ * The function can be called both as a unary isNotLength(a)(b) and binary isNotLength(a, b).
  *
  * @HindleyMilner isNotLength :: (string|array) -> b -> boolean
  *
@@ -710,7 +712,9 @@ export const isLength = nary(a => b => isEqual(lengthOf(b))(a));
  *
  * isNotLength(3)('abc'); // => false
  * isNotLength(3)([1,2,3]); // => false
- * isNotLength(3)('abc'); // => true
+ * isNotLength(3)('abce'); // => true
+ * 
+ * isNotLength(3)('abcd') === isNotLength(3, 'abcd'); // => true
  */
 export const isNotLength = nary(a => b => !isLength(a)(b));
 
@@ -829,3 +833,35 @@ export const isNothing = anything => isNull(anything) || isUndefined(anything) |
  * isJust('7urtle'); // => true
  */
 export const isJust = anything => !isNothing(anything);
+
+/**
+ * when tests anything argument by passing it to predicate function. If the predicate function is true, when
+ * will return the result of whenTrueFn function which receivs the same anything argument. If the predicate
+ * is false, then the anything argument is returned unchanged.
+ * 
+ * The function can be called both as a unary when(predicate)(whenTrueFn)(anything) and ternary when(predicate, whenTrueFn, anything).
+ *
+ * @HindleyMilner when :: (a -> Boolean) -> (a -> a) -> a -> a
+ *
+ * @pure
+ * @param {function} predicate
+ * @param {function} whenTrueFn
+ * @param {*} anything
+ * @return {*}
+ *
+ * @example
+ * import {when} from '@7urtle/lambda';
+ *
+ * const predicate = a => a > 1;
+ * const whenTrueFn = a => a * 2;
+ * 
+ * when(predicate)(whenTrueFn)(2); // => 4
+ * when(predicate)(whenTrueFn)(1); // => 1
+ * 
+ * when(predicate)(whenTrueFn)(2) === when(predicate, whenTrueFn, 2); // => true
+ */
+export const when = nary(predicate => whenTrueFn => anything =>
+    predicate(anything)
+    ? whenTrueFn(anything)
+    : anything
+);
