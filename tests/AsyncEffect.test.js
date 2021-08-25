@@ -1,4 +1,5 @@
 import * as λ from '../src';
+import { AsyncEffect } from '../src';
 
 const resolving = reject => resolve => setTimeout(() => resolve('7urtle'), 10);
 const resolvingBinary = async (reject, resolve) =>  setTimeout(() => resolve('7urtle'), 10);
@@ -146,4 +147,30 @@ test('No input function is executed until trigger is called.', done => {
     expect(some).toBe(3);
     expect(result).toBe(3);
   });
+});
+
+test('mergeAsyncEffects resolves array with results if all effects resolve.', done => {
+  const resolvingOne = λ.AsyncEffect.of(_ => resolve => resolve('Resolving One'));
+  const resolvingTwo = λ.AsyncEffect.of(_ => resolve => resolve('Resolving Two'));
+  λ.mergeAsyncEffects(resolvingOne, resolvingTwo)
+  .trigger
+  (error => fail(error))
+  (result => {
+    expect(result).toEqual(['Resolving One', 'Resolving Two']);
+    done();
+  })
+});
+
+test('mergeAsyncEffects rejects with first error if any effects reject.', done => {
+  const resolvingOne = λ.AsyncEffect.of(_ => resolve => resolve('Resolving One'));
+  const resolvingTwo = λ.AsyncEffect.of(_ => resolve => resolve('Resolving Two'));
+  const rejectingOne = λ.AsyncEffect.of(reject => _ => reject('Rejecting One'));
+  const rejectingTwo = λ.AsyncEffect.of(reject => _ => reject('Rejecting Two'));
+  λ.mergeAsyncEffects(resolvingOne, rejectingOne, rejectingTwo, resolvingTwo)
+  .trigger
+  (error => {
+    expect(error).toBe('Rejecting One');
+    done();
+  })
+  (result => fail(`This should not resolve with result ${result}`))
 });

@@ -1,6 +1,7 @@
-import { deepInspect } from "./utils";
+import { deepInspect, lengthOf } from "./utils";
 import { nary } from "./arity";
-import { isFunction } from "./conditional";
+import { isEqual, isFalse, isFunction } from "./conditional";
+import { map } from "./core";
 
 /**
  * AsyncEffect is a monad that allows you to safely work with asynchronous side effects in JavaScript.
@@ -129,3 +130,53 @@ const getAsyncEffect = trigger => ({
   flatMap: fn => getAsyncEffect(nary(reject => resolve => trigger(reject)(x => fn(x).trigger(reject)(resolve)))),
   ap: f => getAsyncEffect(trigger).flatMap(fn => f.map(fn))
 });
+
+/**
+ * mergeAsyncEffects outputs AsyncEffect which resolves with array of all input AsyncEffects or rejects with the first effect rejected.
+ *
+ * @HindleyMilner mergeAsyncEffects :: ([AsyncEffect]) -> AsyncEffect
+ *
+ * @pure
+ * @param {AsyncEffect} asyncEffects
+ * @return {AsyncEffect}
+ *
+ * @example
+ * import { mergeAsyncEffects, AsyncEffect } from '@7urtle/lambda';
+ * 
+ * const resolvingOne = AsyncEffect.of(_ => resolve => resolve('Resolving One'));
+ * const resolvingTwo = AsyncEffect.of(_ => resolve => resolve('Resolving Two'));
+ *
+ * mergeAsyncEffects(resolvingOne, resolvingTwo)
+ * .trigger(console.log)(console.log);
+ * // => logs ['Resolving One', 'Resolving Two']
+ * 
+ * const rejectingOne = AsyncEffect.of(reject => _ => reject('Rejecting One'));
+ * const rejectingTwo = AsyncEffect.of(reject => _ => reject('Rejecting Two'));
+ * 
+ * mergeAsyncEffects(resolvingOne, rejectingOne, rejectingTwo, resolvingTwo)
+ * .trigger(console.log)(console.log);
+ * // => logs 'Rejecting One'
+ */
+export const mergeAsyncEffects = (...asyncEffects) =>
+  AsyncEffect
+  .of(reject => resolve => {
+    let results = [];
+    let rejected = false;
+
+    const pushResult = (maxLength => result =>
+      isFalse(rejected) &&
+      isEqual(maxLength)(results.push(result)) &&
+      resolve(results)
+    )(lengthOf(asyncEffects));
+
+    const rejectAll = error => {
+      if(isFalse(rejected)) {
+        reject(error);
+        rejected = true;
+      }
+    };
+
+    map(
+      asyncEffect => asyncEffect.trigger(rejectAll)(pushResult)
+    )(asyncEffects);
+  });
