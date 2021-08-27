@@ -40,13 +40,18 @@ export const Success = value => ({
  * can occur and it forces the consumer to handle the situation.
  *
  * @example
- * import {either, Either, upperCaseOf, liftA2} from '@7urtle/lambda';
+ * import {either, Either, Success, Failure, upperCaseOf, liftA2} from '@7urtle/lambda';
  *
  * // in the example we randomly give Either a value or throw an error. Either.try() outputs an instance of Either.
  * const myEither = Either.try(() => Math.random() > 0.5 ? 'random success' : throw 'random failure');
  *
  * // you can also return Either.Failure or Either.Success based on a function logic
  * const myFunction = Math.random() > 0.5 ? Either.Success('random success') : Either.Failure('random failure');
+ * 
+ * // Success and Failure can be called directly
+ * Success('7urtle') === Either.Success('7urtle'); // => true
+ * Success('7urtle') === Either.of('7urtle'); // => true
+ * Failure('error') === Either.Failure('error'); // => true
  *
  * // you could access the actual value like this
  * myEither.value; // => 'random success' or 'random failure'
@@ -55,20 +60,20 @@ export const Success = value => ({
  * myEither.inspect(); // => "Success('random success')" or Failure('random failure')
  *
  * // Either.of and Either.Success both represent success states
- * Either.of('some value').inspect() === Either.Success('some value').inspect(); // => true
+ * Either.of('some value').inspect() === Success('some value').inspect(); // => true
  *
  * // you can check if the value is Failure
  * myEither.isFailure(); // => true or false
  * Either.of('abc').isFailure(); // => false
- * Either.Success('anything').isFailure(); // => false
- * Either.Failure('anything').isFailure(); // => true
+ * Success('anything').isFailure(); // => false
+ * Failure('anything').isFailure(); // => true
  * Either.try(() => {throw 'error'}).isFailure(); // => true
  *
  * // you can check if the value is Success
  * myEither.isSuccess(); // => true or false
  * Either.of('abc').isSuccess(); // => true
- * Either.Success('anything').isSuccess(); // => true
- * Either.Failure('anything').isSuccess(); // => false
+ * Success('anything').isSuccess(); // => true
+ * Failure('anything').isSuccess(); // => false
  * Either.try(() => {throw 'error'}).isSuccess(); // => false
  *
  * // as a functor the value inside is safely mappable (map doesn't execute over Failure)
@@ -77,14 +82,14 @@ export const Success = value => ({
  *
  * // as a monad Either can be safely flat mapped with other Eithers (flatMap doesn't execute over Failure)
  * Either.of(3).flatMap(a => Either.of(a + 2)).inspect(); // => 'Success(5)'
- * Either.Failure(3).flatMap(a => Either.of(null)).inspect(); // => 'Failure(3)'
+ * Failure(3).flatMap(a => Either.of(null)).inspect(); // => 'Failure(3)'
  * Either.of(3).flatMap(a => a + 2); // => 5
  *
  * // as an applicative functor you can apply Eithers to each other especially using liftA2 or liftA3
  * const add = a => b => a + b;
  * liftA2(add)(Either.of(2))(Either.of(3)); // => Success(5)
  * Either.of(1).map(add).ap(Either.of(2)).inspect(); // => 'Success(3)'
- * Either.Failure(1).map(add).ap(Either.of(2)).inspect(); // => 'Failure(1)'
+ * Failure(1).map(add).ap(Either.of(2)).inspect(); // => 'Failure(1)'
  * Either.of(add).ap(Either.of(1)).ap(Either.of(2)).inspect(); // => 'Success(3)'
  */
 export const Either = {
