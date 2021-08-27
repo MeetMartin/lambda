@@ -56,7 +56,7 @@ test('syncEffectToMaybe converts any SyncEffect monad to a Maybe monad.', () => 
   expect(λ.syncEffectToMaybe(λ.SyncEffect.of(() => undefined)).isNothing()).toBe(true);
   expect(λ.syncEffectToMaybe(λ.SyncEffect.of(() => '7urtle')).value).toBe('7urtle');
   expect(λ.syncEffectToMaybe(λ.SyncEffect.of(() => { throw 'I am an error.'; })).isNothing()).toBe(true);
-  expect(λ.syncEffectToMaybe(λ.SyncEffect.of(() => { throw 'I am an error.'; })).value).toBe('I am an error.');
+  expect(λ.syncEffectToMaybe(λ.SyncEffect.of(() => { throw 'I am an error.'; })).value).toBe(null);
 });
 
 test('syncEffectToEither converts any SyncEffect monad to an Either monad.', () => {

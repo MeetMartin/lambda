@@ -29,6 +29,7 @@ test('map executes input mapper over each member of input array [a] to output ne
   const list = ['a', 'b', 'c'];
   expect(λ.map(mapper)(list)).toEqual(['am', 'bm', 'cm']);
   expect(list).toEqual(['a', 'b', 'c']);
+  expect(λ.map(mapper)('7urtle')).toEqual('7urtlem');
   expect(λ.map(mapper)(list)).toEqual(λ.map(mapper, list));
 });
 
@@ -220,4 +221,9 @@ test('memo does not have share memory issue.', () => {
   expect(plus5(5)).toBe(10)
   expect(minus5(5)).toBe(0);
   expect(minus5(5)).toBe(0);
+});
+
+test('fail throws the input error. It is just a function wrapped around JavaScript throw.', () => {
+  expect(() => λ.fail('I am an error.')).toThrow('I am an error.');
+  expect(() => λ.fail(new Error('I am an error.'))).toThrow(new Error('I am an error.'));
 });

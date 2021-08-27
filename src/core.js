@@ -75,7 +75,9 @@ export const compose = (...fns) => anything => reduceRight(anything)((v, f) => f
 export const pipe = (...fns) => anything => reduce(anything)((v, f) => f(v))(fns);
 
 /**
- * map executes mapper function over input array or monad and outputs the resulting array or monad.
+ * map executes mapper function over input. If the input is array or monad, their map functions
+ * are executed. If the input is anything else the mapper function is executed with the input
+ * as its argument.
  *
  * In case of monads, you should use map when you want to work with functors using functions
  * and functional composition rather than calling Functor.map.
@@ -86,9 +88,9 @@ export const pipe = (...fns) => anything => reduce(anything)((v, f) => f(v))(fns
  *
  * @HindleyMilner map :: (a -> b) -> a -> b
  *
- * @param {function} fn
- * @param {array|functor} target
- * @return {array|functor}
+ * @param {function} mapper
+ * @param {*} anything
+ * @return {*}
  *
  * @example
  * import {map, Maybe, upperCaseOf} from '@7urtle/lambda';
@@ -101,6 +103,9 @@ export const pipe = (...fns) => anything => reduce(anything)((v, f) => f(v))(fns
  *
  * // the function upperCaseOf is applied to the value of the functor
  * map(upperCaseOf)(Maybe.of('something')); // => Just('SOMETHING')
+ * 
+ * // the function upperCaseOf is applied to the input string
+ * map(upperCaseOf)('turtle'); // => 'TURTLE'
  *
  * // use of map equals the use of map on the functor
  * map(upperCaseOf)(Maybe.of('something')).value === Maybe.of('something').map(upperCaseOf).value;
@@ -108,7 +113,11 @@ export const pipe = (...fns) => anything => reduce(anything)((v, f) => f(v))(fns
  * // map can be called both as a curried unary function or as a standard binary function
  * map(upperCaseOf)(Maybe.of('something')).value === map(upperCaseOf, Maybe.of('something')).value;
  */
-export const map = nary(mapper => list => list.map(mapper));
+export const map = nary(mapper => anything =>
+    anything?.map
+    ? anything.map(mapper)
+    : mapper(anything)
+);
 
 /**
  * flatMap maps function over inputted functor outputting resulting flattened functor.
@@ -419,3 +428,20 @@ export const memoize = nary(memory => fn => anything =>
  * memoIncreaseCount(); // 3
  */
 export const memo = fn => memoize({})(fn);
+
+/**
+ * fail throws the input error. It is just a function wrapped around JavaScript throw.
+ *
+ * @HindleyMilner fail :: a -> b -> number
+ *
+ * @impure
+ * @param {string|Error} error
+ * @return {null}
+ *
+ * @example
+ * import { fail } from '@7urtle/lambda';
+ *
+ * fail('I am an error.'); // => throws 'I am an error.'
+ * fail(new Error('something happend :(')); // => throws Error('something happened :('))
+ */
+export const fail = error => { throw error; };

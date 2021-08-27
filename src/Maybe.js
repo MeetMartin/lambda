@@ -2,9 +2,29 @@ import { deepInspect } from './utils';
 import { nary } from './arity';
 import { isNothing } from './conditional';
 import { reduce } from './list';
-import { Either } from './Either';
+import { Failure, Success } from './Either';
 import { SyncEffect } from './SyncEffect';
 import { AsyncEffect } from './AsyncEffect';
+
+export const Nothing = {
+  value: null,
+  inspect: () => 'Nothing',
+  isNothing: () => true,
+  isJust: () => false,
+  map: () => Nothing,
+  flatMap: () => Nothing,
+  ap: () => Nothing
+};
+
+export const Just = value => ({
+  value: value,
+  inspect: () => `Just(${deepInspect(value)})`,
+  isNothing: () => false,
+  isJust: () => true,
+  map: fn => Maybe.of(fn(value)),
+  flatMap: fn => fn(value),
+  ap: f => f.map(value)
+});
 
 /**
  * Maybe is one of the simplest and well known monads. Maybe is also quite similar to our monad Either.
@@ -19,10 +39,16 @@ import { AsyncEffect } from './AsyncEffect';
  * In other languages, Maybe monad can also be called Option monad or Nullable monad.
  *
  * @example
- * import {maybe, Maybe, upperCaseOf, liftA2} from '@7urtle/lambda';
+ * import {maybe, Maybe, Just, Nothing, upperCaseOf, liftA2, flatMap, compose, startsWith} from '@7urtle/lambda';
  *
  * // in the example we randomly give Maybe a value or undefined. Maybe.of() outputs an instance of Maybe.
  * const myMaybe = Maybe.of(Math.random() > 0.5 ? 'random success' : undefined);
+ * 
+ * // you can use Just and Nothing directly
+ * Just('7urtle') === Maybe.of('7urtle'); // => true
+ * Just('7urte') === Maybe.Just('7urtle'); // => true
+ * Nothing === Maybe.of(undefined); // => true
+ * Nothing === Maybe.Nothing; // => true
  *
  * // you could access the actual value like this
  * myMaybe.value; // => 'random success' or undefined
@@ -34,11 +60,15 @@ import { AsyncEffect } from './AsyncEffect';
  * myMaybe.isNothing(); // => true or false
  * Maybe.of('abc').isNothing(); // => false
  * Maybe.of([]).isNothing(); // => true
+ * Just('7urtle').isNothing(); // => false
+ * Nothing.isNothing(); // => true
  *
  * // you can check if the value is Just
  * myMaybe.isJust(); // => true or false
  * Maybe.of(123).isJust(); // => true
  * Maybe.of(null).isJust(); // => false
+ * Just('7urtle').isJust(); // => true
+ * Nothing.isJust(); // => false
  *
  * // as a functor the value inside is safely mappable (map doesn't execute over Nothing)
  * myMaybe.map(value => upperCaseOf(value));
@@ -61,40 +91,28 @@ import { AsyncEffect } from './AsyncEffect';
  * Maybe.of(document.querySelector('#idontexist')).map(a => a.offsetTop); // => Nothing
  * maybe
  * (() => 'error: the object doesnt exist')
- * (a => 'offset from top is ' + a)
- * (Maybe.of(document.querySelector('#iexist')).map(a => a.offsetTop));
+ * (offsetTop => 'offset from top is ' + offsetTop)
+ * (Maybe.of(document?.querySelector('#iexist')?.offsetTop));
  * 
  * // to read API request you can use Maybe this way
  * const getQuery = body =>
- *   Maybe
- *   .of(body.queryResult)
- *   .flatMap(a => Maybe.of(a.queryText));
+ *   flatMap
+ *   (a => Maybe.of(a.queryText))
+ *   (Maybe.of(body.queryResult));
+ * 
+ * // you can use Maybe, Just, and Nothing as output of your functions
+ * const maybeGetEnvironmentVariable = key => Maybe.of(process?.env?[key]);
+ * const maybeDIDKeyFromEnvironment =
+ *   compose(
+ *     flatMap(did => startsWith('did:key')(did) ? Just(did) : Nothing),
+ *     maybeGetEnvironmentVariable
+ *   );
  */
 export const Maybe = {
-  of: value => isNothing(value) ? Nothing(value) : Just(value),
+  of: value => isNothing(value) ? Nothing : Just(value),
   Just: value => Just(value),
-  Nothing: value => Nothing(value),
+  Nothing: Nothing
 };
-
-const Nothing = value => ({
-  value: value,
-  inspect: () => 'Nothing',
-  isNothing: () => true,
-  isJust: () => false,
-  map: () => Nothing(value),
-  flatMap: () => Nothing(value),
-  ap: () => Nothing(value)
-});
-
-const Just = value => ({
-  value: value,
-  inspect: () => `Just(${deepInspect(value)})`,
-  isNothing: () => false,
-  isJust: () => true,
-  map: fn => Maybe.of(fn(value)),
-  flatMap: fn => fn(value),
-  ap: f => f.map(value)
-});
 
 /**
  * maybe outputs result of a function onJust if input Maybe is Just or outputs input error if input Maybe is Nothing.
@@ -134,22 +152,22 @@ export const maybe = nary(onNothing => onJust => functorMaybe =>
  * @return {Maybe}
  *
  * @example
- * import { mergeMaybes, Either } from '@7urtle/lambda';
+ * import { mergeMaybes, Nothing, Just, Maybe } from '@7urtle/lambda';
  *
- * mergeMaybes(Maybe.of('abc'), Maybe.of('def')); //  => Just(['abc', 'def'])
- * mergeMaybes(Maybe.of('abc'), Maybe.Nothing()); // => Nothing
- * mergeMaybes(Maybe.Nothing(), Maybe.of('def')); // => Nothing
- * mergeMaybes(Maybe.Nothing(), Maybe.Nothing()); // => Nothing
+ * mergeMaybes(Maybe.of('abc'), Just('def')); //  => Just(['abc', 'def'])
+ * mergeMaybes(Maybe.of('abc'), Nothing); // => Nothing
+ * mergeMaybes(Nothing, Maybe.of('def')); // => Nothing
+ * mergeMaybes(Nothing, Nothing); // => Nothing
  */
 export const mergeMaybes = (...maybes) =>
   reduce
-  (Maybe.Just([]))
+  (Just([]))
   ((accumulator, current) =>
     current.isNothing()
-    ? Maybe.Nothing()
+    ? Nothing
     : accumulator.isNothing()
-      ? Maybe.Nothing()
-      : Maybe.Just([...accumulator.value, current.value])
+      ? Nothing
+      : Just([...accumulator.value, current.value])
   )
   (maybes);
 
@@ -171,8 +189,8 @@ export const mergeMaybes = (...maybes) =>
  */
 export const maybeToEither = maybeMonad =>
   maybe
-  (() => Either.Failure('Maybe is Nothing.'))
-  (value => Either.Success(value))
+  (() => Failure('Maybe is Nothing.'))
+  (value => Success(value))
   (maybeMonad);
 
 /**

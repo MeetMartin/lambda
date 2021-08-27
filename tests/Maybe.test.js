@@ -5,6 +5,14 @@ test('Maybe.of(a).inspect() outputs string Just(a) or Nothing.', () => {
   expect(λ.Maybe.of(null).inspect()).toBe('Nothing');
 });
 
+test('Just(a).inspect() outputs string Just(a).', () => {
+  expect(λ.Just(3).inspect()).toBe('Just(3)');
+});
+
+test('Nothing.inspect() outputs string Nothing.', () => {
+  expect(λ.Nothing.inspect()).toBe('Nothing');
+});
+
 test('Maybe.of(a) outputs Nothing for an input that is null, undefined, an empty string or an empty array.', () => {
   expect(λ.Maybe.of(null).inspect()).toBe('Nothing');
   expect(λ.Maybe.of(undefined).inspect()).toBe('Nothing');
@@ -71,10 +79,10 @@ test('maybe outputs result of a function onJust if input Maybe is Just or output
 });
 
 test('mergeMaybes outputs Maybe of array with all Maybe values depending whether they are Nothing or Just.', () => {
-  expect(λ.mergeMaybes(λ.Maybe.of('abc'), λ.Maybe.of('def')).inspect()).toBe("Just(['abc', 'def'])");
-  expect(λ.mergeMaybes(λ.Maybe.of('abc'), λ.Maybe.Nothing()).inspect()).toBe("Nothing");
-  expect(λ.mergeMaybes(λ.Maybe.Nothing(), λ.Maybe.of('def')).inspect()).toBe("Nothing");
-  expect(λ.mergeMaybes(λ.Maybe.Nothing(), λ.Maybe.Nothing()).inspect()).toBe("Nothing");
+  expect(λ.mergeMaybes(λ.Maybe.of('abc'), λ.Just('def')).inspect()).toBe("Just(['abc', 'def'])");
+  expect(λ.mergeMaybes(λ.Maybe.of('abc'), λ.Nothing).inspect()).toBe("Nothing");
+  expect(λ.mergeMaybes(λ.Nothing, λ.Maybe.Just('def')).inspect()).toBe("Nothing");
+  expect(λ.mergeMaybes(λ.Maybe.Nothing, λ.Nothing).inspect()).toBe("Nothing");
 });
 
 test('maybeToEither converts any Maybe monad to an Either monad.', () => {

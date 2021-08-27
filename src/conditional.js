@@ -793,7 +793,7 @@ export const isZero = isEqual(0);
 export const isNotZero = isNotEqual(0);
 
 /**
- * isNothing returns true if input is null, undefined or empty string or empty array or empty object.
+ * isNothing returns true if input is null, undefined or empty string or empty array or empty object or the monad Nothing.
  *
  * @HindleyMilner isNothing :: a -> boolean
  *
@@ -802,16 +802,23 @@ export const isNotZero = isNotEqual(0);
  * @return {boolean}
  *
  * @example
- * import {isNothing} from '@7urtle/lambda';
+ * import { isNothing, Maybe, Just, Nothing } from '@7urtle/lambda';
  *
  * isNothing(null); // => true
  * isNothing(undefined); // => true
  * isNothing(''); // => true
  * isNothing([]); // => true
  * isNothing({}); // => true
+ * isNothing(Maybe.of('')); // => true
+ * isNothing(Nothing); // => true
  * isNothing('7urtle'); // => false
+ * isNothing(Maybe.of('7urtle')); // => false
+ * isNothing(Just('7urtle')); // => false
  */
-export const isNothing = anything => isNull(anything) || isUndefined(anything) || isEmpty(anything);
+export const isNothing = anything =>
+    anything?.isNothing
+    ? anything.isNothing()
+    : isNull(anything) || isUndefined(anything) || isEmpty(anything);
 
 /**
  * isJust returns true if input is not null, undefined or empty string or empty array or empty object.
@@ -823,16 +830,22 @@ export const isNothing = anything => isNull(anything) || isUndefined(anything) |
  * @return {boolean}
  *
  * @example
- * import {isJust} from '@7urtle/lambda';
+ * import { isJust, Maybe, Just, Nothing } from '@7urtle/lambda';
  *
  * isJust(null); // => false
  * isJust(undefined); // => false
  * isJust(''); // => false
  * isJust([]); // => false
- * isJus({}); // => false
+ * isJust({}); // => false
+ * isJust(Nothing); // => false
  * isJust('7urtle'); // => true
+ * isJust(Maybe.of('7urtle')); // => true
+ * isJust(Just('7urtle')); // => true
  */
-export const isJust = anything => !isNothing(anything);
+export const isJust = anything =>
+    anything?.isJust
+    ? anything.isJust()
+    : !isNothing(anything);
 
 /**
  * when tests anything argument by passing it to predicate function. If the predicate function is true, when
@@ -864,4 +877,71 @@ export const when = nary(predicate => whenTrueFn => anything =>
     predicate(anything)
     ? whenTrueFn(anything)
     : anything
+);
+
+/**
+ * unless tests anything argument by passing it to predicate function. If the predicate function is false, unless
+ * will return the result of whenFalseFn function which receivs the same anything argument. If the predicate
+ * is true, then the anything argument is returned unchanged.
+ * 
+ * The function can be called both as a unary unless(predicate)(whenFalseFn)(anything) and ternary unless(predicate, whenFalseFn, anything).
+ *
+ * @HindleyMilner unless :: (a -> Boolean) -> (a -> a) -> a -> a
+ *
+ * @pure
+ * @param {function} predicate
+ * @param {function} whenFalseFn
+ * @param {*} anything
+ * @return {*}
+ *
+ * @example
+ * import {unless} from '@7urtle/lambda';
+ *
+ * const predicate = a => a > 1;
+ * const whenFalseFn = a => a * 2;
+ * 
+ * when(predicate)(whenFalseFn)(4); // => 4
+ * when(predicate)(whenFalseFn)(1); // => 2
+ * 
+ * when(predicate)(whenFalseFn)(1) === when(predicate, whenFalseFn, 1); // => true
+ */
+export const unless = nary(predicate => whenFalseFn => anything =>
+    predicate(anything)
+    ? anything
+    : whenFalseFn(anything)
+);
+
+/**
+ * ifElse tests anything argument by passing it to predicate function. If the predicate function is true, ifElse
+ * will return the result of whenTrueFn function which receivs the same anything argument. If the predicate
+ * is false, then the anything argument is passed to the whenFalseFn function.
+ * 
+ * The function can be called both as a unary ifElse(predicate)(whenTrueFn)(whenFalseFn)(anything) and quaternary
+ * ifElse(predicate, whenTrueFn, whenFalseFn, anything).
+ *
+ * @HindleyMilner ifElse :: (a -> Boolean) -> (a -> a) -> (a -> a) a -> a
+ *
+ * @pure
+ * @param {function} predicate
+ * @param {function} whenTrueFn
+ * @param {function} whenFalseFn
+ * @param {*} anything
+ * @return {*}
+ *
+ * @example
+ * import {ifElse} from '@7urtle/lambda';
+ *
+ * const predicate = a => a > 1;
+ * const whenTrueFn = a => a / 2;
+ * const whenFalseFn = a => a * 2;
+ * 
+ * ifElse(predicate)(whenTrueFn)(whenFalseFn)(4); // => 2
+ * ifElse(predicate)(whenTrueFn)(whenFalseFn)(1); // => 2
+ * 
+ * ifElse(predicate)(whenTrueFn)(whenFalseFn)(1) === ifElse(predicate, whenTrueFn, whenFalseFn, 1); // => true
+ */
+ export const ifElse = nary(predicate => whenTrueFn => whenFalseFn => anything =>
+    predicate(anything)
+    ? whenTrueFn(anything)
+    : whenFalseFn(anything)
 );

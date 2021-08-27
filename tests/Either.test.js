@@ -18,10 +18,12 @@ test('Either.of(a).inspect() outputs string Success(a).', () => {
 
 test('Either.Success(a).inspect() outputs string Success(a).', () => {
   expect(λ.Either.Success(3).inspect()).toBe('Success(3)');
+  expect(λ.Success(3).inspect()).toBe('Success(3)');
 });
 
 test('Either.Failure(a).inspect() outputs string Failure(a).', () => {
   expect(λ.Either.Failure('I am an error.').inspect()).toBe('Failure(\'I am an error.\')');
+  expect(λ.Failure('I am an error.').inspect()).toBe('Failure(\'I am an error.\')');
 });
 
 test('Either.of(a).isSuccess() always outputs true.', () => {
@@ -123,16 +125,16 @@ test('eitherToMaybe converts any Either monad to a Maybe monad.', () => {
   expect(λ.eitherToMaybe(λ.Either.Success('7urtle')).isJust()).toBe(true);
   expect(λ.eitherToMaybe(λ.Either.Success(undefined)).isNothing()).toBe(true);
   expect(λ.eitherToMaybe(λ.Either.Failure('I am an error.')).isNothing()).toBe(true);
-  expect(λ.eitherToMaybe(λ.Either.Failure('I am an error.')).value).toBe('I am an error.');
+  expect(λ.eitherToMaybe(λ.Either.Failure('I am an error.')).value).toBe(null);
 });
 
 test('eitherToSyncEffect converts any Either monad to a SyncEffect monad.', () => {
-  expect(λ.eitherToSyncEffect(λ.Either.Success('7urtle')).trigger()).toBe('7urtle');
-  expect(λ.eitherToSyncEffect(λ.Either.Failure('I am an error.')).trigger).toThrow('I am an error.');
+  expect(λ.eitherToSyncEffect(λ.Success('7urtle')).trigger()).toBe('7urtle');
+  expect(λ.eitherToSyncEffect(λ.Failure('I am an error.')).trigger).toThrow('I am an error.');
 });
 
 test('eitherToAsyncEffect converts any Either monad to a AsyncEffect monad and resolves.', done => {
-  λ.eitherToAsyncEffect(λ.Either.Success('7urtle'))
+  λ.eitherToAsyncEffect(λ.Success('7urtle'))
     .trigger
     (error => { throw error; })
     (success => {
@@ -142,7 +144,7 @@ test('eitherToAsyncEffect converts any Either monad to a AsyncEffect monad and r
 });
 
 test('eitherToAsyncEffect converts any Either monad to a AsyncEffect monad and rejects.', done => {
-  λ.eitherToAsyncEffect(λ.Either.Failure('I am an error.'))
+  λ.eitherToAsyncEffect(λ.Failure('I am an error.'))
     .trigger
     (error => {
       expect(error).toBe('I am an error.');

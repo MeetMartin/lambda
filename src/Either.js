@@ -1,9 +1,29 @@
 import { deepInspect } from './utils';
 import { nary } from './arity';
 import { reduce } from './list';
-import { Maybe } from './Maybe';
+import { Maybe, Nothing } from './Maybe';
 import { SyncEffect } from './SyncEffect';
 import { AsyncEffect } from './AsyncEffect';
+
+export const Failure = value => ({
+  value: value,
+  inspect: () => `Failure(${deepInspect(value)})`,
+  isFailure: () => true,
+  isSuccess: () => false,
+  map: () => Failure(value),
+  flatMap: () => Failure(value),
+  ap: () => Failure(value)
+});
+
+export const Success = value => ({
+  value: value,
+  inspect: () => `Success(${deepInspect(value)})`,
+  isFailure: () => false,
+  isSuccess: () => true,
+  map: fn => Either.of(fn(value)),
+  flatMap: fn => fn(value),
+  ap: f => f.map(value)
+});
 
 /**
  * Either is an excellent monad for handling error states and it is fairly similar to our monad Maybe. Either.Failure
@@ -80,26 +100,6 @@ export const Either = {
   }
 };
 
-const Failure = value => ({
-  value: value,
-  inspect: () => `Failure(${deepInspect(value)})`,
-  isFailure: () => true,
-  isSuccess: () => false,
-  map: () => Failure(value),
-  flatMap: () => Failure(value),
-  ap: () => Failure(value)
-});
-
-const Success = value => ({
-  value: value,
-  inspect: () => `Success(${deepInspect(value)})`,
-  isFailure: () => false,
-  isSuccess: () => true,
-  map: fn => Either.of(fn(value)),
-  flatMap: fn => fn(value),
-  ap: f => f.map(value)
-});
-
 /**
  * either outputs result of a function onRight if input Either is Success or outputs result of a function onLeft if input Either is Failure.
  *
@@ -148,15 +148,15 @@ export const either = nary(onFailure => onSuccess => functorEither =>
  */
 export const mergeEithers = (...eithers) =>
   reduce
-  (Either.Success([]))
+  (Success([]))
   ((accumulator, current) =>
     current.isFailure()
     ? accumulator.isFailure() // current Either is Failure
-      ? Either.Failure([...accumulator.value, current.value]) // accumulator is Failure and current is Failure => update accumulator
-      : Either.Failure([current.value]) // accumulator is Success and current is Failure => return first Failure
+      ? Failure([...accumulator.value, current.value]) // accumulator is Failure and current is Failure => update accumulator
+      : Failure([current.value]) // accumulator is Success and current is Failure => return first Failure
     : accumulator.isFailure() // current Either is Success
       ? accumulator // accumulator is Failure and current is Success => return accumulator
-      : Either.Success([...accumulator.value, current.value]) // accumulator is Success and current is Success => update accumulator
+      : Success([...accumulator.value, current.value]) // accumulator is Success and current is Success => update accumulator
   )
   (eithers);
 
@@ -194,13 +194,13 @@ export const mergeEithers = (...eithers) =>
  */
 export const validateEithers = (...fns) => input =>
   reduce
-  (Either.Success(input))
+  (Success(input))
   ((accumulator, currentFn) =>
     (currentResult =>
       currentResult.isFailure()
       ? accumulator.isFailure() // currentResult Either is Failure
-        ? Either.Failure([...accumulator.value, currentResult.value]) // accumulator is Failure and currentResult is Failure => update accumulator
-        : Either.Failure([currentResult.value]) // accumulator is Success and currentResult is Failure => return first Failure
+        ? Failure([...accumulator.value, currentResult.value]) // accumulator is Failure and currentResult is Failure => update accumulator
+        : Failure([currentResult.value]) // accumulator is Success and currentResult is Failure => return first Failure
       : accumulator // currentResult Either is Success
     )(currentFn(input))
   )
@@ -226,7 +226,7 @@ export const validateEithers = (...fns) => input =>
  */
 export const eitherToMaybe = eitherMonad =>
   either
-  (error => Maybe.Nothing(error))
+  (() => Nothing)
   (value => Maybe.of(value))
   (eitherMonad);
 

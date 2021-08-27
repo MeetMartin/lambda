@@ -281,6 +281,9 @@ test('isNothing returns true if input is null, undefined or empty string or empt
   expect(λ.isNothing(1)).toBe(false);
   expect(λ.isNothing('7urtle')).toBe(false);
   expect(λ.isNothing([1, 2])).toBe(false);
+  expect(λ.isNothing(λ.Nothing)).toBe(true);
+  expect(λ.isNothing(λ.Just('7urtle'))).toBe(false);
+  expect(λ.isNothing(λ.Maybe.of('7urtle'))).toBe(false);
 });
 
 test('isJust returns true if input is not null, undefined or empty string or empty array.', () => {
@@ -292,6 +295,9 @@ test('isJust returns true if input is not null, undefined or empty string or emp
   expect(λ.isJust('')).toBe(false);
   expect(λ.isJust([])).toBe(false);
   expect(λ.isJust({})).toBe(false);
+  expect(λ.isJust(λ.Nothing)).toBe(false);
+  expect(λ.isJust(λ.Just('7urtle'))).toBe(true);
+  expect(λ.isJust(λ.Maybe.of('7urtle'))).toBe(true);
 });
 
 test('when tests anything argument by passing it to predicate function.', () => {
@@ -301,4 +307,23 @@ test('when tests anything argument by passing it to predicate function.', () => 
   expect(λ.when(predicate)(whenTrueFn)(2)).toBe(4);
   expect(λ.when(predicate)(whenTrueFn)(1)).toBe(1);
   expect(λ.when(predicate)(whenTrueFn)(2)).toBe(λ.when(predicate, whenTrueFn, 2));
+});
+
+test('unless tests anything argument by passing it to predicate function.', () => {
+  const predicate = a => a > 1;
+  const whenFalseFn = a => a * 2;
+
+  expect(λ.unless(predicate)(whenFalseFn)(4)).toBe(4);
+  expect(λ.unless(predicate)(whenFalseFn)(1)).toBe(2);
+  expect(λ.unless(predicate)(whenFalseFn)(1)).toBe(λ.unless(predicate, whenFalseFn, 1));
+});
+
+test('ifElse tests anything argument by passing it to predicate function.', () => {
+  const predicate = a => a > 1;
+  const whenTrueFn = a => a / 2;
+  const whenFalseFn = a => a * 2;
+
+  expect(λ.ifElse(predicate)(whenTrueFn)(whenFalseFn)(4)).toBe(2);
+  expect(λ.ifElse(predicate)(whenTrueFn)(whenFalseFn)(1)).toBe(2);
+  expect(λ.ifElse(predicate)(whenTrueFn)(whenFalseFn)(2)).toBe(λ.ifElse(predicate, whenTrueFn, whenFalseFn, 2));
 });

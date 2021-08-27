@@ -1,5 +1,5 @@
 import { deepInspect } from "./utils";
-import { Maybe } from './Maybe';
+import { Maybe, Nothing } from './Maybe';
 import { Either } from './Either';
 import { AsyncEffect } from './AsyncEffect';
 
@@ -91,7 +91,7 @@ export const syncEffectToMaybe = syncEffectMonad => {
   try {
     return Maybe.of(syncEffectMonad.trigger());
   } catch(error) {
-    return Maybe.Nothing(error);
+    return Nothing;
   }
 };
 
