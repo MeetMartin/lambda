@@ -12,7 +12,12 @@ export const Failure = value => ({
   isSuccess: () => false,
   map: () => Failure(value),
   flatMap: () => Failure(value),
-  ap: () => Failure(value)
+  catchMap: fn => Failure(fn(value)),
+  bimap: nary(leftFn => _ => Failure(leftFn(value))),
+  ap: () => Failure(value),
+  orOf: a => Success(a),
+  orElse: fn => fn(),
+  orTry: fn => Either.try(fn)
 });
 
 export const Success = value => ({
@@ -20,9 +25,14 @@ export const Success = value => ({
   inspect: () => `Success(${deepInspect(value)})`,
   isFailure: () => false,
   isSuccess: () => true,
-  map: fn => Either.of(fn(value)),
+  map: fn => Success(fn(value)),
+  catchMap: () => Success(value),
+  bimap: nary(_ => rightFn => Success(rightFn(value))),
   flatMap: fn => fn(value),
-  ap: f => f.map(value)
+  ap: m => m.map(value),
+  orOf: () => Success(value),
+  orElse: () => Success(value),
+  orTry: () => Success(value)
 });
 
 /**
@@ -84,6 +94,27 @@ export const Success = value => ({
  * Either.of(3).flatMap(a => Either.of(a + 2)).inspect(); // => 'Success(5)'
  * Failure(3).flatMap(a => Either.of(null)).inspect(); // => 'Failure(3)'
  * Either.of(3).flatMap(a => a + 2); // => 5
+ * 
+ * // you can use catchMap if you want to map over Failure
+ * Failure('error').catchMap(a => a + 's'); // => Failure('errors')
+ * Success('7urtle').catchMap(a => a + 's'); // => Success('7urtle') 
+ * 
+ * // you can use bimap to map over both Success and Failure with different functions
+ * Failure('error').bimap(a + ' is left')(a => a + ' is right');  // => Failure('error is left')
+ * Succcess('7urtle').bimap(a + ' is left')(a => a + ' is right'); // => Success('7urtle is right')
+ * 
+ * // orOf(a) replaces Failure with Success
+ * Failure('error').orOf('7urtles'); // => Success('7urtle')
+ * Success('7urtle').orOf('tortoise'); // => Success('7urtle')
+ * 
+ * // orElse(a -> Either) replaces Failure with the output of orElse function
+ * Failure('error').orElse(() => Success('7urtle')); // => Success('7urtle')
+ * Success('7urtle').orElse(() => Success('tortoise')); // => Success('7urtle')
+ * 
+ * // orTry(a -> b) replaces original Fairlure with Either.try
+ * Failure('error').orTry(() => { throw 'i am an error'; }); // => Failure('i am an error')
+ * Failure('error').orTry(() => '7urtle'); // => Success('7urtle')
+ * Success('7urtle').orTry(() => { throw 'i am an error'; }); // => Success('7urtle')
  *
  * // as an applicative functor you can apply Eithers to each other especially using liftA2 or liftA3
  * const add = a => b => a + b;

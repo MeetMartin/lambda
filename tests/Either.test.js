@@ -1,4 +1,5 @@
 import * as λ from '../src';
+import { Success } from '../src';
 
 test('Either.of(a) outputs instance of Success holding its input value.', () => {
   expect(λ.Either.of(3).inspect()).toBe('Success(3)');
@@ -80,6 +81,45 @@ test('Either.of(a).map(a -> b).ap(Either) provides applicative ability to apply 
   expect(λ.Either.of(1).map(add).ap(λ.Either.of(2)).inspect()).toBe('Success(3)');
   expect(λ.Either.of(1).map(add).ap(λ.Either.Failure('I am an error.')).inspect()).toBe('Failure(\'I am an error.\')');
   expect(λ.Either.Failure('I am an error.').map(add).ap(λ.Either.of(2)).inspect()).toBe('Failure(\'I am an error.\')');
+});
+
+test('Either.of(a).catchMap(a -> b) maps over the Failure value.', () => {
+  const addS = a => a + 's';
+  expect(λ.Failure('error').catchMap(addS).inspect()).toBe("Failure('errors')");
+  expect(λ.Success('7urtle').catchMap(addS).inspect()).toBe("Success('7urtle')");
+  expect(λ.Either.of('7urtle').catchMap(addS).inspect()).toBe("Success('7urtle')");
+});
+
+test('Either.of(a).bimap(a -> b)(a -> b) maps first function over Failure and the other over Success.', () => {
+  const addRight = a => a + ' is right';
+  const addLeft = a => a + ' is left';
+  expect(λ.Failure('error').bimap(addLeft)(addRight).inspect()).toBe("Failure('error is left')");
+  expect(λ.Failure('error').bimap(addLeft, addRight).inspect()).toBe("Failure('error is left')");
+  expect(λ.Success('7urtle').bimap(addLeft)(addRight).inspect()).toBe("Success('7urtle is right')");
+  expect(λ.Success('7urtle').bimap(addLeft, addRight).inspect()).toBe("Success('7urtle is right')");
+  expect(λ.Either.of('7urtle').bimap(addLeft)(addRight).inspect()).toBe("Success('7urtle is right')");
+});
+
+test('Either.of(a).orOf(b) replaces Failure(a) with Success(b).', () => {
+  expect(λ.Failure('error').orOf('7urtles').inspect()).toBe("Success('7urtles')");
+  expect(λ.Success('7urtle').orOf('7urtles').inspect()).toBe("Success('7urtle')");
+  expect(λ.Either.of('7urtle').orOf('7urtles').inspect()).toBe("Success('7urtle')");
+});
+
+test('Either.of(a).orElse(a -> Either) replaces Failure(a) with the output of orElse function.', () => {
+  expect(λ.Failure('error').orElse(() => λ.Success('7urtles')).inspect()).toBe("Success('7urtles')");
+  expect(λ.Success('7urtle').orElse(() => λ.Success('7urtles')).inspect()).toBe("Success('7urtle')");
+  expect(λ.Either.of('7urtle').orElse(() => λ.Success('7urtles')).inspect()).toBe("Success('7urtle')");
+});
+
+test('Either.of(a).orTry(a -> b) replaces original Fairlure with Either.try.', () => {
+  const iThrowError = () => {
+    throw new Error('I am an error.');
+  };
+  expect(λ.Failure('error').orTry(iThrowError).inspect()).toBe('Failure(\'I am an error.\')');
+  expect(λ.Failure('error').orTry(() => '7urtle').inspect()).toBe("Success('7urtle')");
+  expect(λ.Success('7urtle').orTry(iThrowError).inspect()).toBe("Success('7urtle')");
+  expect(λ.Either.of('7urtle').orTry(iThrowError).inspect()).toBe("Success('7urtle')");
 });
 
 test('Either.of(Either -> Either -> c).ap(Either).ap(Either) provides applicative interface for a functor of a function.', () => {
