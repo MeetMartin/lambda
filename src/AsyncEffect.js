@@ -171,12 +171,12 @@ export const mergeAsyncEffects = (...asyncEffects) =>
 
     const rejectAll = error => {
       if(isFalse(rejected)) {
-        reject(error);
         rejected = true;
+        reject(error);
       }
     };
 
-    map(
+    return map(
       asyncEffect => asyncEffect.trigger(rejectAll)(pushResult)
     )(asyncEffects);
   });
