@@ -159,24 +159,6 @@ const getAsyncEffect = trigger => ({
  */
 export const mergeAsyncEffects = (...asyncEffects) =>
   AsyncEffect
-  .of(reject => resolve => {
-    let results = [];
-    let rejected = false;
-
-    const pushResult = (maxLength => result =>
-      isFalse(rejected) &&
-      isEqual(maxLength)(results.push(result)) &&
-      resolve(results)
-    )(lengthOf(asyncEffects));
-
-    const rejectAll = error => {
-      if(isFalse(rejected)) {
-        rejected = true;
-        reject(error);
-      }
-    };
-
-    return map(
-      asyncEffect => asyncEffect.trigger(rejectAll)(pushResult)
-    )(asyncEffects);
-  });
+  .ofPromise(
+      () => Promise.all(map(a => a.promise())(asyncEffects))
+  );
