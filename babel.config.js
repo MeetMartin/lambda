@@ -6,7 +6,6 @@ module.exports = {
   ],
   plugins: [
     '@babel/plugin-proposal-throw-expressions',
-    '@babel/plugin-transform-runtime',
-    '@babel/plugin-syntax-dynamic-import'
+    '@babel/plugin-transform-runtime'
   ]
 };

@@ -114,7 +114,7 @@ export const pipe = (...fns) => anything => reduce(anything)((v, f) => f(v))(fns
  * map(upperCaseOf)(Maybe.of('something')).value === map(upperCaseOf, Maybe.of('something')).value;
  */
 export const map = nary(mapper => anything =>
-    anything?.map
+    anything && anything.map
     ? anything.map(mapper)
     : mapper(anything)
 );
@@ -429,7 +429,7 @@ export const memoize = nary(memory => fn => anything =>
  */
 export const memo = fn => memoize({})(fn);
 
-/*
+/**
  * fail throws the input error. It is just a function wrapped around JavaScript throw.
  *
  * @HindleyMilner fail :: a -> b -> number
@@ -443,5 +443,5 @@ export const memo = fn => memoize({})(fn);
  *
  * fail('I am an error.'); // => throws 'I am an error.'
  * fail(new Error('something happend :(')); // => throws Error('something happened :('))
- 
-export const fail = error => { throw error; };*/
+ */
+export const fail = error => { throw error; };

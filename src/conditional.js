@@ -816,7 +816,7 @@ export const isNotZero = isNotEqual(0);
  * isNothing(Just('7urtle')); // => false
  */
 export const isNothing = anything =>
-    anything?.isNothing
+    anything && anything.isNothing
     ? anything.isNothing()
     : isNull(anything) || isUndefined(anything) || isEmpty(anything);
 
@@ -843,9 +843,7 @@ export const isNothing = anything =>
  * isJust(Just('7urtle')); // => true
  */
 export const isJust = anything =>
-    anything?.isJust
-    ? anything.isJust()
-    : !isNothing(anything);
+    !isNothing(anything);
 
 /**
  * when tests anything argument by passing it to predicate function. If the predicate function is true, when
