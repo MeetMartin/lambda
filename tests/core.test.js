@@ -223,7 +223,7 @@ test('memo does not have share memory issue.', () => {
   expect(minus5(5)).toBe(0);
 });
 
-test('fail throws the input error. It is just a function wrapped around JavaScript throw.', () => {
+/*test('fail throws the input error. It is just a function wrapped around JavaScript throw.', () => {
   expect(() => λ.fail('I am an error.')).toThrow('I am an error.');
   expect(() => λ.fail(new Error('I am an error.'))).toThrow(new Error('I am an error.'));
-});
+});*/
