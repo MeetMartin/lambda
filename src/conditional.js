@@ -719,9 +719,43 @@ export const isLength = nary(a => b => isEqual(lengthOf(b))(a));
 export const isNotLength = nary(a => b => !isLength(a)(b));
 
 /**
+ * isElement output is true if input is an HTML or SVG Element. Otherwise it is false.
+ *
+ * @HindleyMilner isElement :: a -> boolean
+ *
+ * @pure
+ * @param {*} anything
+ * @return {boolean}
+ *
+ * @example
+ * import {isElement} from '@7urtle/lambda';
+ *
+ * isElement(document.createElement('span')); // => true
+ */
+export const isElement = anything =>
+    (typeof Element !== 'undefined' && anything instanceof Element) ||
+    (typeof HTMLDocument !== 'undefined' && anything instanceof HTMLDocument);
+
+/**
+ * isNotElement output is true if input is not an HTML or SVG Element. Otherwise it is false.
+ *
+ * @HindleyMilner isNotElement :: a -> boolean
+ *
+ * @pure
+ * @param {*} anything
+ * @return {boolean}
+ *
+ * @example
+ * import {isNotElement} from '@7urtle/lambda';
+ *
+ * isNotElement(document.createElement('span')); // => false
+ */
+export const isNotElement = anything => !isElement(anything);
+
+/**
  * isEmpty output is true if input is an empty string, array, or object. Otherwise it is false.
  *
- * @HindleyMilner isEmpty :: (string|array) -> boolean
+ * @HindleyMilner isEmpty :: (string|array|Element) -> boolean
  *
  * @pure
  * @param {string|array|object} anything
@@ -734,15 +768,17 @@ export const isNotLength = nary(a => b => !isLength(a)(b));
  * isEmpty([]); // => true
  * isEmpty({}); // => true
  * isEmpty('abc'); // => false
+ * isEmpty(document.getElementByID('image')); // => false
  */
 export const isEmpty = anything =>
     isLength(0)(anything) ||
+    isNotElement(anything) &&
     (isObject(anything) ? isLength(0)(Object.getOwnPropertyNames(anything)) : false);
 
 /**
  * isNotEmpty output is false if input is an empty string, array, or object. Otherwise it is true.
  *
- * @HindleyMilner isNotEmpty :: (string|array) -> boolean
+ * @HindleyMilner isNotEmpty :: (string|array|Element) -> boolean
  *
  * @pure
  * @param {string|array|object} anything
@@ -755,6 +791,7 @@ export const isEmpty = anything =>
  * isNotEmpty([]); // => false
  * isNotEmpty('abc'); // => true
  * isNotEmpty({}); => true
+ * isNotEmpty(document.getElementByID('image')); // => true
  */
 export const isNotEmpty = anything => !isEmpty(anything);
 

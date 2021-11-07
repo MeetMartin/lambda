@@ -1,3 +1,7 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import * as λ from '../src';
 
 test('both and(f,g)(x), and(g,f)(x) are equivalent to f(x) && g(x) as well as g(x) && f(x)', () => {
@@ -242,6 +246,18 @@ test('isNotLength output is true if b is not a length of a.', () => {
   expect(λ.isNotLength(3)('abc')).toBe(false);
   expect(λ.isNotLength(3)([1,2,3])).toBe(false);
   expect(λ.isNotLength(1)('abc')).toBe(λ.isNotLength(1, 'abc'));
+});
+
+test('isElement output is true if input is an HTML or SVG Element. Otherwise it is false.', () => {
+  const myElement = document.createElement('span');
+  expect(λ.isElement(myElement)).toBe(true);
+  expect(λ.isElement('')).toBe(false);
+});
+
+test('isNotElement output is true if input is not an HTML or SVG Element. Otherwise it is false.', () => {
+  const myElement = document.createElement('span');
+  expect(λ.isNotElement(myElement)).toBe(false);
+  expect(λ.isNotElement('')).toBe(true);
 });
 
 test('isEmpty output is true if input is an empty string, array, or object. Otherwise is is false.', () => {
