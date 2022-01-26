@@ -1,6 +1,6 @@
 {
   "name": "@7urtle/lambda",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "Functional programming library in JavaScript.",
   "type": "module",
   "module": "./src/index.js",
@@ -9,10 +9,10 @@
     "module": "./src/index.js",
     "import": "./src/index.js",
     "require": "./dist/lambda.min.cjs",
-    "browser": "./dist/lambda.min.cjs"
+    "browser": "./dist/lambda.min.js"
   },
-  "unpkg": "./dist/lambda.min.cjs",
-  "jsdelivr": "./dist/lambda.min.cjs",
+  "unpkg": "./dist/lambda.min.js",
+  "jsdelivr": "./dist/lambda.min.js",
   "files": [
     "dist/*",
     "src/*",
@@ -23,7 +23,7 @@
     "node": ">=12.16"
   },
   "scripts": {
-    "build": "webpack --progress --mode production",
+    "build": "webpack --progress --mode production && node ./create-browser-build.js",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --silent",
     "maintain": "npx npm-check-updates -u & npm update && npm audit fix --force && npm test && npm run build",
     "analyze": "source-map-explorer 'dist/*.cjs'"

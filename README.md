@@ -68,7 +68,7 @@ hello('Hello World');
 // => HELLO WORLD
  ```
 
-Get the minified version from GitHub: [lambda.min.cjs](https://github.com/MeetMartin/lambda/blob/master/dist/lambda.min.cjs)
+Get the minified version from GitHub: [lambda.min.js](https://github.com/MeetMartin/lambda/blob/master/dist/lambda.min.js)
 
 ```
 <script src="./your/copy/of/lambda.min.js"></script>
@@ -84,7 +84,7 @@ alert(message); // HELLO WORLD
 Or use public CDN: https://www.jsdelivr.com/package/npm/@7urtle/lambda.
 
 ```
-<script src="https://cdn.jsdelivr.net/npm/@7urtle/lambda@latest/dist/lambda.min.cjs"></script>
+<script src="https://cdn.jsdelivr.net/npm/@7urtle/lambda@latest/dist/lambda.min.js"></script>
 
 <script>
 // script on your website
@@ -103,6 +103,10 @@ Try @7urtle/lambda with online playground using [CodePen](https://codepen.io/mar
 Made with [contributors-img](https://contributors-img.firebaseapp.com).
 
 ## Changelog
+
+### 1.1.4
+
+* Added a build for browsers and CDNs.
 
 ### 1.4.0
 
