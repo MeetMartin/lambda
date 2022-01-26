@@ -1,4 +1,4 @@
-import * as λ from '../src';
+import * as λ from '../src/index.js';
 
 test('reduce executes input reducer function that over each member of input array [b] to output single value a.', () => {
   const reducer = (accumulator, currentValue) => accumulator + currentValue;

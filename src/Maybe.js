@@ -1,10 +1,10 @@
-import { deepInspect } from './utils';
-import { nary } from './arity';
-import { isNothing } from './conditional';
-import { reduce } from './list';
-import { Failure, Success } from './Either';
-import { SyncEffect } from './SyncEffect';
-import { AsyncEffect } from './AsyncEffect';
+import { deepInspect } from './utils.js';
+import { nary } from './arity.js';
+import { isNothing } from './conditional.js';
+import { reduce } from './list.js';
+import { Failure, Success } from './Either.js';
+import { SyncEffect } from './SyncEffect.js';
+import { AsyncEffect } from './AsyncEffect.js';
 
 export const Nothing = {
   value: null,

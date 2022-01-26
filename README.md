@@ -68,7 +68,7 @@ hello('Hello World');
 // => HELLO WORLD
  ```
 
-Get the minified version from GitHub: [lambda.min.js](https://github.com/MeetMartin/lambda/blob/master/dist/lambda.min.js)
+Get the minified version from GitHub: [lambda.min.cjs](https://github.com/MeetMartin/lambda/blob/master/dist/lambda.min.cjs)
 
 ```
 <script src="./your/copy/of/lambda.min.js"></script>
@@ -84,7 +84,7 @@ alert(message); // HELLO WORLD
 Or use public CDN: https://www.jsdelivr.com/package/npm/@7urtle/lambda.
 
 ```
-<script src="https://cdn.jsdelivr.net/npm/@7urtle/lambda@latest/dist/lambda.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@7urtle/lambda@latest/dist/lambda.min.cjs"></script>
 
 <script>
 // script on your website
@@ -101,3 +101,12 @@ Try @7urtle/lambda with online playground using [CodePen](https://codepen.io/mar
 [![Contributors](https://contributors-img.firebaseapp.com/image?repo=MeetMartin/lambda)](https://github.com/MeetMartin/lambda/graphs/contributors)
 
 Made with [contributors-img](https://contributors-img.firebaseapp.com).
+
+## Changelog
+
+### 1.4.0
+
+* Library type changed to module using ESM imports/exports. Still supports require and UMD through webpack/babel build.
+* Optimizations for tree-shakeability of the library for both ESM and CJS.
+* Declaring Node support from version 12.16 (current node is 17.4.0, LTS is 16.13.2, and AWS Lambda defaults to node 14).
+* These changes were heavily tested with different configurations. However, if you encounter any issues, please report them on GitHub.

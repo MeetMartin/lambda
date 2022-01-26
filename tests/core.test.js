@@ -1,4 +1,4 @@
-import * as λ from '../src';
+import * as λ from '../src/index.js';
 
 test('identity output is the same as input.', () => {
   expect(λ.identity('a')).toBe('a');

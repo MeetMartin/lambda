@@ -1,7 +1,7 @@
-import {isArray, isEqual, isString, isObject, isFunction, isNull, isUndefined, isGreaterThan} from "./conditional";
-import {keysOf, join} from "./list";
-import {map} from "./core";
-import {nary} from "./arity";
+import { isArray, isEqual, isString, isObject, isFunction, isNull, isUndefined } from "./conditional.js";
+import {keysOf, join} from "./list.js";
+import {map} from "./core.js";
+import {nary} from "./arity.js";
 
 /**
  * typeOf outputs a type of its input.

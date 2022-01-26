@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import * as λ from '../src';
+import * as λ from '../src/index.js';
 
 test('both and(f,g)(x), and(g,f)(x) are equivalent to f(x) && g(x) as well as g(x) && f(x)', () => {
   const f = λ.isGreaterThan(0);

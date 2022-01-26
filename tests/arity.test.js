@@ -1,4 +1,4 @@
-import * as λ from '../src';
+import * as λ from '../src/index.js';
 
 test('nary takes curried function and allows it to be called both as curried and n-ary.', () => {
     const fn1 = λ.nary(a => b => a + b);

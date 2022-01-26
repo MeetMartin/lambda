@@ -1,4 +1,4 @@
-import * as λ from '../src';
+import * as λ from '../src/index.js';
 
 test('trim output is a string without white characters around it.', () => {
   expect(λ.trim(' a ')).toBe('a');

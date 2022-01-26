@@ -1,5 +1,5 @@
-import {deepInspect} from "./utils";
-import {isUndefined} from "./conditional";
+import {deepInspect} from "./utils.js";
+import {isUndefined} from "./conditional.js";
 
 /**
  * Case is a monad that helps you with conditional processing.

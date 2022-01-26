@@ -1,7 +1,7 @@
-import * as λ from '../src';
+import * as λ from '../src/index.js';
 
 test('SyncEffect.of(() -> a).inspect() outputs string SyncEffect(a).', () => {
-  expect(λ.SyncEffect.of(() => '7turtle').inspect().includes('SyncEffect(function')).toBe(true);
+  expect(λ.SyncEffect.of(() => '7turtle').inspect()).toBe("SyncEffect(() => '7turtle')");
 });
 
 test('SyncEffect.of(() -> a).trigger() executes function provided as input of SyncEffect.', () => {

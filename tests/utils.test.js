@@ -1,4 +1,4 @@
-import * as λ from '../src';
+import * as λ from '../src/index.js';
 
 test('typeOf outputs type of its input a.', () => {
   expect(λ.typeOf('7turtle')).toBe('string');
@@ -34,7 +34,7 @@ test('inspectFunction outputs name of named function or its conversion to string
   function namedFunction() {
     return null;
   }
-  expect(λ.inspectFunction(() => 'b').includes('function')).toBe(true);
+  expect(λ.inspectFunction(() => 'b')).toBe("() => 'b'");
   expect(λ.inspectFunction(namedFunction)).toBe('namedFunction');
 });
 

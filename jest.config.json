@@ -1,0 +1,6 @@
+{
+  "collectCoverage": true,
+  "verbose": true,
+  "testEnvironment": "jest-environment-node",
+  "transform": {}
+}

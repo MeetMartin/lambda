@@ -1,6 +1,6 @@
-import {lengthOf, minusOneToUndefined} from './utils';
-import {nary} from "./arity";
-import {upperCaseOf} from "./string";
+import {lengthOf, minusOneToUndefined} from './utils.js';
+import {nary} from "./arity.js";
+import {upperCaseOf} from "./string.js";
 
 /**
  * reduce executes input reducer function that over each member of input array [b] to output a single value. It is

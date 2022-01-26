@@ -1,7 +1,7 @@
-import { deepInspect, lengthOf } from "./utils";
-import { nary } from "./arity";
-import { isEqual, isFalse, isFunction } from "./conditional";
-import { map } from "./core";
+import { deepInspect } from "./utils.js";
+import { nary } from "./arity.js";
+import { isFunction } from "./conditional.js";
+import { map } from "./core.js";
 
 /**
  * AsyncEffect is a monad that allows you to safely work with asynchronous side effects in JavaScript.

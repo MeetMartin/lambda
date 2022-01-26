@@ -1,5 +1,4 @@
-import * as λ from '../src';
-import { Success } from '../src';
+import * as λ from '../src/index.js';
 
 test('Either.of(a) outputs instance of Success holding its input value.', () => {
   expect(λ.Either.of(3).inspect()).toBe('Success(3)');

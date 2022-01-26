@@ -1,6 +1,6 @@
-import { typeOf, lengthOf, deepInspect } from "./utils";
-import { everyOf, someOf } from './list';
-import { nary } from "./arity";
+import { typeOf, lengthOf, deepInspect } from "./utils.js";
+import { everyOf, someOf } from './list.js';
+import { nary } from "./arity.js";
 
 /**
  * and is a boolean-type function composition

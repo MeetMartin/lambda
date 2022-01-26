@@ -1,5 +1,5 @@
-import {minusOneToUndefined} from './utils';
-import {nary} from "./arity";
+import {minusOneToUndefined} from './utils.js';
+import {nary} from "./arity.js";
 
 /**
  * trim output is a string without white characters around it.

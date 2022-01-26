@@ -1,7 +1,7 @@
-import { deepInspect } from "./utils";
-import { Maybe, Nothing } from './Maybe';
-import { Either } from './Either';
-import { AsyncEffect } from './AsyncEffect';
+import { deepInspect } from "./utils.js";
+import { Maybe, Nothing } from './Maybe.js';
+import { Either } from './Either.js';
+import { AsyncEffect } from './AsyncEffect.js';
 
 /**
  * SyncEffect is a monad that allows you to safely work with synchronous side effects in JavaScript.

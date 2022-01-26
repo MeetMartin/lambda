@@ -1,7 +1,7 @@
-import * as λ from '../src';
+import * as λ from '../src/index.js';
 
 test('Case.of([]).inspect() outputs string Case(a -> b).', () => {
-  expect(λ.Case.of([['_', '7turtle']]).inspect().includes('Case(function')).toBe(true);
+  expect(λ.Case.of([['_', '7turtle']]).inspect().includes('Case(')).toBe(true);
 });
 
 test('Case.of([]).match(a) matches input a against map provided as input of Case.', () => {

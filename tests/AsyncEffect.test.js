@@ -1,5 +1,4 @@
-import * as λ from '../src';
-import { AsyncEffect } from '../src';
+import * as λ from '../src/index.js';
 
 const resolving = reject => resolve => setTimeout(() => resolve('7urtle'), 10);
 const resolvingBinary = async (reject, resolve) =>  setTimeout(() => resolve('7urtle'), 10);
@@ -10,7 +9,7 @@ const throwing = () => {
 };
 
 test('AsyncEffect.of(() -> a).inspect() outputs string AsyncEffect(a).', () => {
-  expect(λ.AsyncEffect.of(() => '7turtle').inspect().includes('AsyncEffect(function')).toBe(true);
+  expect(λ.AsyncEffect.of(() => '7turtle').inspect().includes('AsyncEffect(')).toBe(true);
 });
 
 test('AsyncEffect.of(a -> b -> c).trigger(e -> f)(g -> h) for resolving curried function resolves.', done => {

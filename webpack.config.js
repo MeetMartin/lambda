@@ -1,10 +1,14 @@
-const path = require('path');
+import path  from 'path';
+import {fileURLToPath} from 'url';
 
-module.exports = {
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+export default {
   entry: './src/index.js',
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: 'lambda.min.js',
+    filename: 'lambda.min.cjs',
     library: 'L',
     libraryTarget: 'umd',
     globalObject: 'this'
@@ -17,6 +21,13 @@ module.exports = {
         use: 'babel-loader'
       }
     ]
+  },
+  optimization: {
+    usedExports: true,
+    providedExports: true,
+    innerGraph: true,
+    sideEffects: true,
+    minimize: true
   },
   devtool: 'source-map'
 };

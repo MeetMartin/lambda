@@ -1,7 +1,7 @@
-import { reduce, reduceRight } from './list';
-import { isString, isArray, isObject } from './conditional';
-import { minusOneToUndefined, passThrough } from './utils';
-import { nary } from "./arity";
+import { reduce, reduceRight } from './list.js';
+import { isString, isArray, isObject } from './conditional.js';
+import { minusOneToUndefined, passThrough } from './utils.js';
+import { nary } from "./arity.js";
 
 /**
  * identity is a function that simply passes its input to its output without changing it.

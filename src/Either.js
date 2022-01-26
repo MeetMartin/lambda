@@ -1,9 +1,9 @@
-import { deepInspect } from './utils';
-import { nary } from './arity';
-import { reduce } from './list';
-import { Maybe, Nothing } from './Maybe';
-import { SyncEffect } from './SyncEffect';
-import { AsyncEffect } from './AsyncEffect';
+import { deepInspect } from './utils.js';
+import { nary } from './arity.js';
+import { reduce } from './list.js';
+import { Maybe, Nothing } from './Maybe.js';
+import { SyncEffect } from './SyncEffect.js';
+import { AsyncEffect } from './AsyncEffect.js';
 
 export const Failure = value => ({
   value: value,

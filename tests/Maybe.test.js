@@ -1,4 +1,4 @@
-import * as λ from '../src';
+import * as λ from '../src/index.js';
 
 test('Maybe.of(a).inspect() outputs string Just(a) or Nothing.', () => {
   expect(λ.Maybe.of(3).inspect()).toBe('Just(3)');
